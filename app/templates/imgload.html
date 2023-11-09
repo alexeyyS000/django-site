@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <form class="mt-5" method="post" enctype="multipart/form-data">
+    {% csrf_token %} 
+    <div class="choosefilebutton">
+    {{form.avatar_url}}
+    <div style="margin-top:20px;">
+  <button class="btn btn-secondary btn-sm"  type="submit">Upload</button>
+</div>
+</div>
+  </form>
+
+  {% if img_obj %}  
+   <img src="http://localhost:8082/static/local-media/{{ user.profile.avatar_url }}" class="center" >
+  {% endif %}
+  {% endblock %}
