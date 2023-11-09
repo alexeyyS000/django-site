@@ -6,7 +6,7 @@ from .forms import ImageLoad
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import AuthenticationForm
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class RegisterUser(View):
     template_name = "registration/register.html"
@@ -28,7 +28,7 @@ class RegisterUser(View):
         return render(request, self.template_name, context)
 
 
-class ProfileView(View):
+class ProfileView(LoginRequiredMixin, View):
     template_name = "profile.html"
 
     def get(self, request):
@@ -37,7 +37,7 @@ class ProfileView(View):
             return render(request, self.template_name, context)
 
 
-class ImageUpload(View):
+class ImageUpload(LoginRequiredMixin, View):
     template_name = "imgload.html"
 
     def post(self, request):
@@ -65,7 +65,6 @@ class CustomLogin(View):
     def post(self, request):
         form = CustomLoginform(request.POST)
         if form.is_valid():
-            # username = form.cleaned_data.get('username')
             password = form.cleaned_data.get("password")
             email = form.cleaned_data.get("email")
             user = authenticate(email=email, password=password)
