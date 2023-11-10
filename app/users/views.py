@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 
 class RegisterUser(View):
     template_name = "registration/register.html"
@@ -18,12 +19,19 @@ class RegisterUser(View):
     def post(self, request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
             password = form.cleaned_data.get("password1")
             email = form.cleaned_data.get("email")
-            user = authenticate(email=email, password=password)
-            login(request, user)
-            return redirect("home")
+            username = form.cleaned_data.get("username")
+            if User.objects.filter(email=email).first() is None:
+                form.save()
+                user = authenticate(email=email, password=password)
+                login(request, user)
+                return redirect("home")
+            else:
+                form.full_clean()
+                User.objects.filter(email=email,username = username).delete()
+                return render(request, self.template_name, {"form": form})
+                #пока не знаю как адекватно реализовать эту логику с нерегистрацией существующего емейла  
         context = {"form": form}
         return render(request, self.template_name, context)
 
