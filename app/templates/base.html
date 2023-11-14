@@ -14,7 +14,7 @@
 <ul class="list-group">
     <li class="list-group-item">
         {% if user.profile.avatar_url %}
-        <img src="http://localhost:8082/static/local-media/{{ user.profile.avatar_url }}" class="rounded-img">
+        <img src="http://localhost:9000/local-media/{{ user.profile.avatar_url }}" class="rounded-img">
         {% endif %}
         User: {{ user }}
     </li>

@@ -2,7 +2,9 @@ FROM python:3.11
 
 WORKDIR /app
 
-RUN pip install poetry==1.4.2
+ENV POETRY_VERSION=1.4.2
+
+RUN pip install poetry==$POETRY_VERSION
 
 COPY pyproject.toml .
 COPY poetry.lock .

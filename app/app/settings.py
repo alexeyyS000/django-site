@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from . import config
 from pathlib import Path
+
+from . import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -154,4 +155,4 @@ MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
 MINIO_STORAGE_STATIC_BUCKET_NAME = "local-static"
 MINIO_STORAGE_AUTO_CREATE_STATIC_BUCKET = True
 
-AUTHENTICATION_BACKENDS = ["users.backends.EmailBackend"]
+# AUTHENTICATION_BACKENDS = ["users.backends.EmailBackend"]

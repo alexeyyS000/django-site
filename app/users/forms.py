@@ -1,11 +1,9 @@
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from django import forms
 from django.utils.translation import gettext_lazy as _
+
 from .models import Profile
-
-
-User = get_user_model()
 
 
 class UserCreationForm(UserCreationForm):
@@ -16,21 +14,28 @@ class UserCreationForm(UserCreationForm):
     )
 
     class Meta(UserCreationForm.Meta):
-        model = User
+        model = get_user_model()
         fields = ("username", "email")
 
+    def clean_email(self):
+        print("in clean_email")
+        email = self.cleaned_data.get("email")
+        print(email)
+        UserModel = get_user_model()
+        if UserModel.objects.filter(email=email).first() is not None:
+            print("in yslovie")
+            msg = "This email is already exist"
+            self.add_error("email", msg)
+        return email
 
-class ImageLoad(forms.ModelForm):
+
+class ImageLoadForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ("avatar_url",)
 
 
-# class CustomAuthenticationForm(AuthenticationForm):
-#     email = forms.EmailField(widget=forms.TextInput(attrs={"autofocus": True}))
-
-
-class CustomLoginform(forms.Form):  # не смог переопределить LoginForm
+class LoginForm(forms.Form):  # не смог переопределить LoginForm
     email = forms.CharField()
     password = forms.CharField(
         widget=forms.PasswordInput,

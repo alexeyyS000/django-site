@@ -1,5 +1,7 @@
-import dotenv
 import os
+
+import dotenv
+
 from .settings import *
 
 dotenv_path = os.path.join(os.path.dirname(__file__), ".env.local")
