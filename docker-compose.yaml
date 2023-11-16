@@ -3,7 +3,7 @@ services:
   app:
     restart: always
     build: .
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
     env_file:
       - .env
     depends_on:
@@ -16,12 +16,6 @@ services:
       - postgres-data:/var/lib/postgresql/data
     env_file:
       - .env
-  nginx:
-    image: nginx:1.19.2-alpine
-    volumes:
-      - ./conf.d:/etc/nginx/conf.d
-    depends_on:
-      - app
   minio:
     image: minio/minio:RELEASE.2021-04-06T23-11-00Z
     volumes:
@@ -29,6 +23,11 @@ services:
     env_file:
       - .env
     command: minio server /data/minio/
+
+  nginx:
+    build: nginx
+    depends_on:
+      - app
 
 volumes:
   postgres-data:

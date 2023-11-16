@@ -139,7 +139,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://nginx.your-domain.com",
     "https://www.nginx.your-domain.com",
     "http://nginx.your-domain.com",
-    "http://localhost:8082",
+    "http://localhost:80",
 ]
 
 
@@ -155,4 +155,3 @@ MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
 MINIO_STORAGE_STATIC_BUCKET_NAME = "local-static"
 MINIO_STORAGE_AUTO_CREATE_STATIC_BUCKET = True
 
-# AUTHENTICATION_BACKENDS = ["users.backends.EmailBackend"]

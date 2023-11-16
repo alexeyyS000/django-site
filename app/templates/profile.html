@@ -18,7 +18,7 @@
 
             <div class="image">
                 {% if user.profile.avatar_url %}
-                <img src="http://localhost:8082/static/local-media/{{ user.profile.avatar_url }}" class="rounded"
+                <img src="http://localhost:80/static/local-media/{{ user.profile.avatar_url }}" class="rounded"
                      width="155">
                 <a href="{% url 'users:load_image' %}">change_image</a>
                 {% else %}

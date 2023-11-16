@@ -29,14 +29,19 @@ class UserCreationForm(UserCreationForm):
         return email
 
 
-class ImageLoadForm(forms.ModelForm):
+class UserAvatarUploadForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ("avatar_url",)
 
 
-class LoginForm(forms.Form):  # не смог переопределить LoginForm
-    email = forms.CharField()
+class LoginForm(forms.Form):
+    email = forms.EmailField(        
+        label=_("Email"),
+        max_length=254,
+        widget=forms.EmailInput(attrs={"autocomplete": "email"}),
+        )
+    
     password = forms.CharField(
         widget=forms.PasswordInput,
         error_messages={"required": "Please Enter your password"},

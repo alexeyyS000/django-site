@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 
-from .forms import ImageLoadForm
+from .forms import UserAvatarUploadForm
 from .forms import LoginForm
 from .forms import UserCreationForm
 from .utils import email_authenticate
@@ -47,7 +47,7 @@ class ImageUploadView(LoginRequiredMixin, View):
     template_name = "imgload.html"
 
     def post(self, request):
-        form = ImageLoadForm(request.POST, request.FILES, instance=request.user.profile)
+        form = UserAvatarUploadForm(request.POST, request.FILES, instance=request.user.profile)
         if form.is_valid():
             form.save()
             img_obj = form.instance
@@ -55,7 +55,7 @@ class ImageUploadView(LoginRequiredMixin, View):
             return render(request, self.template_name, context)
 
     def get(self, request):
-        form = ImageLoadForm()
+        form = UserAvatarUploadForm()
         context = {"form": form}
         return render(request, self.template_name, context)
 
