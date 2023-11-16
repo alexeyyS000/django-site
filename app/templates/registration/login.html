@@ -2,35 +2,34 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <head>
+<head>
 
-  </head>
-  <body class="text-center">
-    
-  
+</head>
+<body class="text-center">
 
-      <div class="authform">
-        <h1 class="h3 mb-3 font-weight-normal">Login</h1>
-        <form class="p-3 mt-3" method="post">
-          {% csrf_token %}
-          <!-- <input type="username" name="username" id="userName" placeholder="username"> -->
-          <!-- <input type="username" name="username" id="username" placeholder="username"> -->
-          <input type="email" name="email" id="email" placeholder="Email">
-          <input type="password" name="password" id="pwd" placeholder="Password">
-          
-          {{ form.errors }}
-          
-          <div class="checkbox mb-3">
+
+<div class="authform">
+    <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+    <form class="p-3 mt-3" method="post">
+        {% csrf_token %}
+        <!-- <input type="username" name="username" id="userName" placeholder="username"> -->
+        <!-- <input type="username" name="username" id="username" placeholder="username"> -->
+        <input type="email" name="email" id="email" placeholder="Email">
+        <input type="password" name="password" id="pwd" placeholder="Password">
+
+        {{ form.errors }}
+
+        <div class="checkbox mb-3">
             <label>
-              <input value="remember-me" type="checkbox"> Remember me
+                <input value="remember-me" type="checkbox"> Remember me
             </label>
-          </div>
-          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-        </form>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
 
-      <a href="{% url 'users:password_reset' %}">Forgot password?</a>
-      </div>
-  
-  </body>
-  </html>
+    <a href="{% url 'users:password_reset' %}">Forgot password?</a>
+</div>
+
+</body>
+</html>
 {% endblock %}

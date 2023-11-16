@@ -2,16 +2,16 @@
 
 {% block content %}
 
-    <div class="authform">
-        <h1 class="h3 mb-3 font-weight-normal">Registartion</h1>
-        <form action="{% url 'users:registartion' %}" method="post">
-          {% csrf_token %}
-          <input type="username" name="username" id="userName" placeholder="Username">
-          <input type="email" name="email" id="email" placeholder="Email">
-          <input type="password" name="password1" id="pwd" placeholder="Password">
-          <input type="password" name="password2" id="pwd" placeholder="Repeat password">
-          {{form.errors}}
-          <button type="submit" class="btn btn-success">submit</button>
-        </form>
-      </div>
+<div class="authform">
+    <h1 class="h3 mb-3 font-weight-normal">Registartion</h1>
+    <form action="{% url 'users:registartion' %}" method="post">
+        {% csrf_token %}
+        <input type="username" name="username" id="userName" placeholder="Username">
+        <input type="email" name="email" id="email" placeholder="Email">
+        <input type="password" name="password1" id="pwd" placeholder="Password">
+        <input type="password" name="password2" id="pwd" placeholder="Repeat password">
+        {{form.errors}}
+        <button type="submit" class="btn btn-success">submit</button>
+    </form>
+</div>
 {% endblock %}

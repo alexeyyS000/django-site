@@ -8,8 +8,8 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 
-from .forms import UserAvatarUploadForm
 from .forms import LoginForm
+from .forms import UserAvatarUploadForm
 from .forms import UserCreationForm
 from .utils import email_authenticate
 
@@ -27,7 +27,6 @@ class RegisterUserView(View):
             form.save()
             password = form.cleaned_data.get("password1")
             username = form.cleaned_data.get("username")
-            form.save()
             user = authenticate(username=username, password=password)
             login(request, user)
             return redirect("home")
@@ -74,10 +73,7 @@ class LoginView(View):
             password = form.cleaned_data.get("password")
             email = form.cleaned_data.get("email")
             user = email_authenticate(email=email, password=password)
-            if user is not None:
-                login(request, user)
-            else:
-                return render(request, self.template_name, {"form": form})
+            login(request, user)
             return redirect("home")
         context = {"form": form}
         return render(request, self.template_name, context)

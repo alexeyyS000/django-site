@@ -1,9 +1,11 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from .models import Profile
+from .utils import email_authenticate
 
 
 class UserCreationForm(UserCreationForm):
@@ -18,12 +20,9 @@ class UserCreationForm(UserCreationForm):
         fields = ("username", "email")
 
     def clean_email(self):
-        print("in clean_email")
         email = self.cleaned_data.get("email")
-        print(email)
         UserModel = get_user_model()
         if UserModel.objects.filter(email=email).first() is not None:
-            print("in yslovie")
             msg = "This email is already exist"
             self.add_error("email", msg)
         return email
@@ -36,13 +35,25 @@ class UserAvatarUploadForm(forms.ModelForm):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(        
+    email = forms.EmailField(
         label=_("Email"),
         max_length=254,
         widget=forms.EmailInput(attrs={"autocomplete": "email"}),
-        )
-    
+    )
+
     password = forms.CharField(
         widget=forms.PasswordInput,
         error_messages={"required": "Please Enter your password"},
     )
+
+    def clean(self):
+        email = self.cleaned_data.get("email")
+        password = self.cleaned_data.get("password")
+
+        if email is not None and password is not None:
+            user = email_authenticate(email=email, password=password)
+            if user is None:
+                raise ValidationError("incorrect email or password")
+            # else:
+            #     login(self.request, user) хочется сделать логин прям здесть, пока не знаю как правильно передать request
+        return self.cleaned_data
