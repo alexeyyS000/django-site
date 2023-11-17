@@ -18,7 +18,7 @@ class RegisterUserView(View):
     template_name = "registration/register.html"
 
     def get(self, request):
-        context = {"form": UserCreationForm}
+        context = {"form": UserCreationForm, "title": "Registration"}
         return render(request, self.template_name, context)
 
     def post(self, request):
@@ -38,7 +38,7 @@ class ProfileView(LoginRequiredMixin, View):
     template_name = "profile.html"
 
     def get(self, request):
-        context = {"form": AuthenticationForm}
+        context = {"form": AuthenticationForm, "title": "Profile"}
         return render(request, self.template_name, context)
 
 
@@ -55,7 +55,7 @@ class ImageUploadView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = UserAvatarUploadForm()
-        context = {"form": form}
+        context = {"form": form, "title": "Upload Avatar"}
         return render(request, self.template_name, context)
 
 
@@ -63,7 +63,7 @@ class LoginView(View):
     template_name = "registration/login.html"
 
     def get(self, request):
-        context = {"form": LoginForm}
+        context = {"form": LoginForm, "title": "Login"}
         return render(request, self.template_name, context)
 
     @method_decorator(csrf_protect)
