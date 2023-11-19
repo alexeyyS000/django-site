@@ -10,4 +10,5 @@ urlpatterns = [
     path("", include("django.contrib.auth.urls")),
     path("profile/", views.ProfileView.as_view(), name="profile"),
     path("upload/", views.ImageUploadView.as_view(), name="load_image"),
+    path("register_confirm/<token>/", views.register_confirm, name="register_confirm"),
 ]

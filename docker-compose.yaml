@@ -26,9 +26,14 @@ services:
 
   nginx:
     build: nginx
+    ports:
+      - 80:80
     depends_on:
       - app
-
+  redis:
+    restart: always
+    image: redis:7.0-alpine
+    
 volumes:
   postgres-data:
   data:
