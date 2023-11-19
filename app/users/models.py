@@ -10,7 +10,7 @@ from django.dispatch import receiver
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar_url = models.ImageField()
-    registration_date = models.DateField(default=date.today())
+    registration_date = models.DateField(default=date.today)
     is_active_email = models.BooleanField(default=False)
 
     @receiver(post_save, sender=User)

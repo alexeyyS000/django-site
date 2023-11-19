@@ -116,4 +116,4 @@ def register_confirm(request, token):
         profile.save(update_fields=["is_active_email"])
         return redirect(to=reverse_lazy("users:profile"))
     else:
-        return redirect(to=reverse_lazy("users:register"))
+        return redirect(to=reverse_lazy("users:signup"))

@@ -4,7 +4,7 @@
 
 <div class="authform">
     <h1 class="h3 mb-3 font-weight-normal">Registartion</h1>
-    <form action="{% url 'users:registartion' %}" method="post">
+    <form action="{% url 'users:signup' %}" method="post">
         {% csrf_token %}
         <input type="username" name="username" id="userName" placeholder="Username">
         <input type="email" name="email" id="email" placeholder="Email">

@@ -11,7 +11,7 @@ from .utils import email_authenticate
 class UserCreationForm(UserCreationForm):
     email = forms.EmailField(
         label=_("Email"),
-        max_length=254,
+        max_length=256,
         widget=forms.EmailInput(attrs={"autocomplete": "email"}),
     )
 
@@ -37,7 +37,7 @@ class UserAvatarUploadForm(forms.ModelForm):
 class LoginForm(forms.Form):
     email = forms.EmailField(
         label=_("Email"),
-        max_length=254,
+        max_length=256,
         widget=forms.EmailInput(attrs={"autocomplete": "email"}),
     )
 
@@ -50,7 +50,7 @@ class LoginForm(forms.Form):
         email = self.cleaned_data.get("email")
         password = self.cleaned_data.get("password")
 
-        if email is not None and password is not None:
+        if email and password:
             user = email_authenticate(email=email, password=password)
             if user is None:
                 raise ValidationError("incorrect email or password")
