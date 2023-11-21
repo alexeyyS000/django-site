@@ -1,48 +1,92 @@
 {% extends 'base.html' %}
-
+{% block title %}
+Profile
+{% endblock %}
 {% block content %}
-<body>
-<div class="container mt-5 d-flex justify-content-center">
+<section style="background-color: #eee;">
+    <div class="container py-5">
 
-    <div class="card p-3">
-
-        <div class="d-flex align-items-center">
-
-            <div class="image">
-                {% if user.profile.avatar_url %}
-                <img src="http://localhost:80/static/local-media/{{ user.profile.avatar_url }}" class="rounded"
-                     width="155">
-                <a href="{% url 'users:load_image' %}">change_image</a>
-                {% else %}
-                <a href="{% url 'users:load_image' %}">load iamge</a>
-                {% endif %}
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        {% if user.profile.avatar %}
+                        <a href="{% url 'users:load_image' %}"><img src="{{ user.profile.avatar.url }}"
+                                class="rounded-circle img-fluid" style="width: 150px;"></a>
+                        {% else %}
+                        <a class="link-body-emphasis text-decoration-none" href="{% url 'users:load_image' %}">Upload
+                            image</a>
+                        {% endif %}
+                        <h5 class="my-3">{{ user.username }}</h5>
+                        <p class="text-muted mb-1">{{ user.email }}
+                            {% if user.profile.is_active_email %}
+                            confirmed
+                            {%endif %}</p>
+                        <p class="text-muted mb-4">total answers to questions:</p>
+                    </div>
+                </div>
             </div>
-
-            <div class="ml-3 w-100">
-
-                <h4 class="mb-0 mt-0">{{ user.username }}</h4>
-                {% if user.profile.is_active_email %}
-                <h4 class="mb-0 mt-0">{{ user.email }}  confirmed</h4>
-                {% else %}
-                <h4 class="mb-0 mt-0">{{ user.email }}</h4>
-                {% endif %}
-                <h4 class="mb-0 mt-0">{{ user.profile.registration_date }}</h4>
-
-
-                <div class="button mt-2 d-flex flex-row align-items-center">
-
-
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Name</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">Johnatan</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Surname</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">smith</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Date of Birth</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">234-5678</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Date of Registration</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{{ user.profile.registration_date }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Location</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">location</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Country</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">San Francisco, CA</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-
             </div>
-
-
         </div>
-
     </div>
-
-</div>
-</body>
-</html>
+</section>
 {% endblock %}

@@ -82,7 +82,7 @@ WSGI_APPLICATION = "app.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": config.POSTGRES_DB,
         "USER": config.POSTGRES_USER,
         "PASSWORD": config.POSTGRES_PASSWORD,
@@ -169,7 +169,7 @@ DEFAULT_FROM_EMAIL = config.DEFAULT_FROM_EMAIL
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
     }
 }
 

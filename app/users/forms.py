@@ -31,7 +31,7 @@ class UserCreationForm(UserCreationForm):
 class UserAvatarUploadForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ("avatar_url",)
+        fields = ("avatar",)
 
 
 class LoginForm(forms.Form):

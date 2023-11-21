@@ -1,17 +1,35 @@
 {% extends 'base.html' %}
-
+{% block title %}
+Signup
+{% endblock %}
 {% block content %}
 
-<div class="authform">
-    <h1 class="h3 mb-3 font-weight-normal">Registartion</h1>
-    <form action="{% url 'users:signup' %}" method="post">
+<div class="form-signin w-100 m-auto">
+
+    <form method="post">
         {% csrf_token %}
-        <input type="username" name="username" id="userName" placeholder="Username">
-        <input type="email" name="email" id="email" placeholder="Email">
-        <input type="password" name="password1" id="pwd" placeholder="Password">
-        <input type="password" name="password2" id="pwd" placeholder="Repeat password">
-        {{form.errors}}
-        <button type="submit" class="btn btn-success">submit</button>
+        <h1 class="h3 mb-3 fw-normal">Please fill the form</h1>
+        {{ form.errors }}
+        <div class="form-floating">
+            <input type="username" class="form-control" name="username" id="username" placeholder="Username">
+            <label for="username">Username</label>
+        </div>
+        <div class="form-floating">
+            <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+            <label for="email">Email address</label>
+        </div>
+        <div class="form-floating">
+            <input type="password1" class="form-control" name="password1" id="pwd1" placeholder="Password">
+            <label for="pwd1">Password</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" class="form-control" name="password2" id="pwd2" placeholder="Repeat Password">
+            <label for="pwd2">Repeat Password</label>
+        </div>
+
+        <button class="btn btn-primary w-100 py-2" type="submit">Submit</button>
+        <a href="{% url 'users:password_reset' %}">Forgot password?</a>
+        <p class="mt-5 mb-3 text-body-secondary">© 2017–2023</p>
     </form>
 </div>
 {% endblock %}
