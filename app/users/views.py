@@ -2,11 +2,11 @@ import uuid
 
 from django.conf import settings
 from django.contrib.auth import authenticate
-from django.contrib.auth import get_user_model
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
@@ -20,29 +20,37 @@ from django.views.decorators.csrf import csrf_protect
 from .forms import LoginForm
 from .forms import UserAvatarUploadForm
 from .forms import UserCreationForm
+from .models import Country
 from .models import Profile
 from .utils import email_authenticate
-
-UserModel = get_user_model()
 
 
 class RegisterUserView(View):
     template_name = "registration/register.html"
 
     def get(self, request):
-        context = {"form": UserCreationForm, "title": "Registration"}
+        context = {"form": UserCreationForm}
         return render(request, self.template_name, context)
 
     def post(self, request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
+            language = form.cleaned_data.get("language")
             password = form.cleaned_data.get("password1")
             username = form.cleaned_data.get("username")
             email = form.cleaned_data.get("email")
+            birthday = form.cleaned_data.get("birthday")
+            country = form.cleaned_data.get("country")
             user = authenticate(username=username, password=password)
-
-            user = UserModel.objects.get(email=email)
+            profile = user.profile
+            profile.language = language
+            profile.birthday = birthday
+            try:
+                profile.country_id = Country.objects.get(country=country).id
+            except ObjectDoesNotExist:
+                pass
+            profile.save(update_fields=["language", "birthday", "country_id"])
             token = uuid.uuid4().hex
             redis_key = settings.USER_CONFIRMATION_KEY.format(token=token)
             cache.set(redis_key, {"user_id": user.id}, timeout=settings.USER_CONFIRMATION_TIMEOUT)
@@ -65,7 +73,11 @@ class ProfileView(LoginRequiredMixin, View):
     template_name = "profile.html"
 
     def get(self, request):
-        context = {"form": AuthenticationForm, "title": "Profile"}
+        try:
+            country = Country.objects.get(id=request.user.profile.country_id)
+        except ObjectDoesNotExist:
+            pass
+        context = {"form": AuthenticationForm, "country": country}
         return render(request, self.template_name, context)
 
 
@@ -82,7 +94,7 @@ class ImageUploadView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = UserAvatarUploadForm()
-        context = {"form": form, "title": "Upload Avatar"}
+        context = {"form": form}
         return render(request, self.template_name, context)
 
 
@@ -90,7 +102,7 @@ class LoginView(View):
     template_name = "registration/login.html"
 
     def get(self, request):
-        context = {"form": LoginForm, "title": "Login"}
+        context = {"form": LoginForm}
         return render(request, self.template_name, context)
 
     @method_decorator(csrf_protect)

@@ -19,6 +19,18 @@ Signup
             <label for="email">Email address</label>
         </div>
         <div class="form-floating">
+            <input type="first_name" class="form-control" name="first_name" id="first_name" placeholder="first_name">
+            <label for="first_name">First name</label>
+        </div>
+        <div class="form-floating">
+            <input type="last_name" class="form-control" name="last_name" id="last_name" placeholder="last_name">
+            <label for="last_name">Last name</label>
+        </div>
+        <div class="form-floating">
+            <input type="birthday" class="form-control" name="birthday" id="birthday" placeholder="birthday">
+            <label for="birthday">birthday</label>
+        </div>
+        <div class="form-floating">
             <input type="password1" class="form-control" name="password1" id="pwd1" placeholder="Password">
             <label for="pwd1">Password</label>
         </div>
@@ -26,9 +38,9 @@ Signup
             <input type="password" class="form-control" name="password2" id="pwd2" placeholder="Repeat Password">
             <label for="pwd2">Repeat Password</label>
         </div>
-
+        enter country(optional): {{ form.country }}
+        language: {{ form.language }}
         <button class="btn btn-primary w-100 py-2" type="submit">Submit</button>
-        <a href="{% url 'users:password_reset' %}">Forgot password?</a>
         <p class="mt-5 mb-3 text-body-secondary">© 2017–2023</p>
     </form>
 </div>
