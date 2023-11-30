@@ -15,9 +15,7 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(null=True)
-    birthday = models.DateField(
-        null=True, default=None
-    )  # не получается обойтись без default, изза созания профиля после юзера один null=Truе не помогает
+    birthday = models.DateField(null=True)
     is_active_email = models.BooleanField(default=False)
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICE, default="EN")
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, default=None)

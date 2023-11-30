@@ -31,15 +31,23 @@ Signup
             <label for="birthday">birthday</label>
         </div>
         <div class="form-floating">
-            <input type="password1" class="form-control" name="password1" id="pwd1" placeholder="Password">
+            <input type="password" class="form-control" name="password1" id="pwd1" placeholder="Password">
             <label for="pwd1">Password</label>
         </div>
         <div class="form-floating">
             <input type="password" class="form-control" name="password2" id="pwd2" placeholder="Repeat Password">
             <label for="pwd2">Repeat Password</label>
         </div>
-        enter country(optional): {{ form.country }}
-        language: {{ form.language }}
+        <select class="form-select form-select-sm" name='country' id="id_country">
+            {% for country in form.country %}
+            {{country}}
+            {% endfor %}
+        </select>
+        <select class="form-select form-select-sm" name='language' id="id_language">
+            {% for language in form.language %}
+            {{language}}
+            {% endfor %}
+        </select>
         <button class="btn btn-primary w-100 py-2" type="submit">Submit</button>
         <p class="mt-5 mb-3 text-body-secondary">© 2017–2023</p>
     </form>

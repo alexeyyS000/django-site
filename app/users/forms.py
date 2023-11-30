@@ -1,17 +1,20 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.contrib.auth import password_validation
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 
+from .models import Country
 from .models import Profile
 from .utils import email_authenticate
 
 UserModel = get_user_model()
 
 
-class UserCreationForm(UserCreationForm):
+class UserCreationForm(forms.ModelForm):
     email = forms.EmailField(
         label=_("Email"),
         max_length=256,
@@ -22,7 +25,27 @@ class UserCreationForm(UserCreationForm):
 
     birthday = forms.DateField(input_formats=["%Y-%m-%d", "%m/%d/%Y", "%m/%d/%y"])
 
-    class Meta(UserCreationForm.Meta):
+    password1 = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    password2 = forms.CharField(
+        label=_("Password confirmation"),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password"}),
+        strip=False,
+        help_text=_("Enter the same password as before, for verification."),
+    )
+    error_messages = {
+        "password_mismatch": _("The two password fields didn’t match."),
+    }
+
+    first_name = forms.CharField(required=True)
+
+    last_name = forms.CharField(required=True)
+
+    class Meta:
         model = UserModel
         fields = ("username", "email", "first_name", "last_name")
 
@@ -34,19 +57,35 @@ class UserCreationForm(UserCreationForm):
             self.add_error("email", msg)
         return email
 
-    def clean_first_name(self):
-        first_name = self.cleaned_data.get("first_name")
-        if not first_name:
-            msg = "enter your first name"
-            self.add_error("first_name", msg)
-        return first_name
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise ValidationError(
+                self.error_messages["password_mismatch"],
+                code="password_mismatch",
+            )
+        return password2
 
-    def clean_last_name(self):
-        last_name = self.cleaned_data.get("last_name")
-        if not last_name:
-            msg = "enter your first name"
-            self.add_error("last_name", msg)
-        return last_name
+    def save(self, commit=True):
+        user = super(UserCreationForm, self).save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        language = self.cleaned_data.get("language")
+        birthday = self.cleaned_data.get("birthday")
+        country = self.cleaned_data.get("country")
+        profile = user.profile
+        profile.language = language
+        profile.birthday = birthday
+        try:
+            profile.country_id = Country.objects.get(country=country).id
+        except ObjectDoesNotExist:
+            pass
+        if commit:
+            profile.save(update_fields=["language", "birthday", "country_id"])
+
+        return user
 
 
 class UserAvatarUploadForm(forms.ModelForm):

@@ -1,28 +1,25 @@
-import uuid
-
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 
 from .forms import LoginForm
 from .forms import UserAvatarUploadForm
 from .forms import UserCreationForm
-from .models import Country
 from .models import Profile
+from .tasks import send_message
 from .utils import email_authenticate
+from .utils import generate_confirm_email
+from .utils import set_cache
 
 
 class RegisterUserView(View):
@@ -36,33 +33,16 @@ class RegisterUserView(View):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            language = form.cleaned_data.get("language")
             password = form.cleaned_data.get("password1")
             username = form.cleaned_data.get("username")
             email = form.cleaned_data.get("email")
-            birthday = form.cleaned_data.get("birthday")
-            country = form.cleaned_data.get("country")
             user = authenticate(username=username, password=password)
-            profile = user.profile
-            profile.language = language
-            profile.birthday = birthday
-            try:
-                profile.country_id = Country.objects.get(country=country).id
-            except ObjectDoesNotExist:
-                pass
-            profile.save(update_fields=["language", "birthday", "country_id"])
-            token = uuid.uuid4().hex
-            redis_key = settings.USER_CONFIRMATION_KEY.format(token=token)
-            cache.set(redis_key, {"user_id": user.id}, timeout=settings.USER_CONFIRMATION_TIMEOUT)
-
-            confirm_link = self.request.build_absolute_uri(
-                reverse_lazy("users:register_confirm", kwargs={"token": token})
+            token = set_cache(
+                settings.USER_CONFIRMATION_TIMEOUT, settings.USER_CONFIRMATION_KEY, **{"user_id": user.id}
             )
-            message = _(f"follow this link %s \n" f"to confirm! \n" % confirm_link)
-
-            email = EmailMessage("please confirm your eamail", message, to=[email])
-            email.send()
-
+            email = generate_confirm_email(request, token, email)
+            serialized_email = email.__dict__
+            send_message.delay(serialized_email)
             login(request, user)
             return redirect("home")
         context = {"form": form}
@@ -73,11 +53,7 @@ class ProfileView(LoginRequiredMixin, View):
     template_name = "profile.html"
 
     def get(self, request):
-        try:
-            country = Country.objects.get(id=request.user.profile.country_id)
-        except ObjectDoesNotExist:
-            pass
-        context = {"form": AuthenticationForm, "country": country}
+        context = {"form": AuthenticationForm}
         return render(request, self.template_name, context)
 
 

@@ -5,12 +5,16 @@ import django_countries.fields
 from django.conf import settings
 from django.db import migrations
 from django.db import models
-
-from ..utils import fill_county_table
+from django_countries import countries
 
 
 class Migration(migrations.Migration):
     initial = True
+
+    def fill_county_table(apps, schema_editor):
+        Country = apps.get_model("users", "Country")
+        for country in countries:
+            Country.objects.create(country=country)
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),

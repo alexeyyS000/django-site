@@ -28,7 +28,7 @@ SECRET_KEY = config.SECRET_KEY
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "app"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "app", "158.160.43.177"]
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
@@ -140,8 +140,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://www.nginx.your-domain.com",
     "http://nginx.your-domain.com",
     "http://localhost:80",
+    "http://158.160.43.177",
+    "http://158.160.43.177:80",
 ]
-
 
 DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
 MINIO_STORAGE_ENDPOINT = config.MINIO_STORAGE_ENDPOINT
@@ -176,3 +177,10 @@ CACHES = {
 
 USER_CONFIRMATION_KEY = "user_confirmation_{token}"
 USER_CONFIRMATION_TIMEOUT = 300
+
+
+CELERY_BROKER_URL = "redis://localhost:6379/2"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/3"
+
+
+MINIO_STORAGE_MEDIA_URL = "http://localhost:9000/local-media/"
