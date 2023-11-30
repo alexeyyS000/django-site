@@ -1,17 +1,12 @@
 from django import forms
-from django.contrib.auth import get_user_model
 from django.contrib.auth import password_validation
-from django.contrib.auth.forms import UserCreationForm
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 
 from .models import Country
-from .models import Profile
+from .models import User
 from .utils import email_authenticate
-
-UserModel = get_user_model()
 
 
 class UserCreationForm(forms.ModelForm):
@@ -21,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
         widget=forms.EmailInput(attrs={"autocomplete": "email"}),
     )
     country = CountryField(null=True, blank=True).formfield()
-    language = forms.ChoiceField(choices=Profile.LANGUAGE_CHOICE)
+    language = forms.ChoiceField(choices=User.LANGUAGE_CHOICE)
 
     birthday = forms.DateField(input_formats=["%Y-%m-%d", "%m/%d/%Y", "%m/%d/%y"])
 
@@ -46,12 +41,12 @@ class UserCreationForm(forms.ModelForm):
     last_name = forms.CharField(required=True)
 
     class Meta:
-        model = UserModel
-        fields = ("username", "email", "first_name", "last_name")
+        model = User
+        fields = ("username", "email", "first_name", "last_name", "birthday", "language")
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
-        email_exists = UserModel.objects.filter(email=email).first()
+        email_exists = User.objects.filter(email=email).first()
         if email_exists:
             msg = "This email is already exist"
             self.add_error("email", msg)
@@ -68,29 +63,18 @@ class UserCreationForm(forms.ModelForm):
         return password2
 
     def save(self, commit=True):
-        user = super(UserCreationForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password1"])
-        if commit:
-            user.save()
-        language = self.cleaned_data.get("language")
-        birthday = self.cleaned_data.get("birthday")
+        instance = super(UserCreationForm, self).save(commit=False)
+        instance.set_password(self.cleaned_data["password1"])
         country = self.cleaned_data.get("country")
-        profile = user.profile
-        profile.language = language
-        profile.birthday = birthday
-        try:
-            profile.country_id = Country.objects.get(country=country).id
-        except ObjectDoesNotExist:
-            pass
+        instance.country = Country.objects.get(country=country)
         if commit:
-            profile.save(update_fields=["language", "birthday", "country_id"])
-
-        return user
+            instance.save()
+        return instance
 
 
 class UserAvatarUploadForm(forms.ModelForm):
     class Meta:
-        model = Profile
+        model = User
         fields = ("avatar",)
 
 

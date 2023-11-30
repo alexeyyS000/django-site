@@ -10,8 +10,8 @@ Profile
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
-                        {% if user.profile.avatar %}
-                        <a href="{% url 'users:load_image' %}"><img src="{{ user.profile.avatar.url }}"
+                        {% if user.avatar %}
+                        <a href="{% url 'users:load_image' %}"><img src="{{ user.avatar.url }}"
                                 class="rounded-circle img-fluid" style="width: 150px;"></a>
                         {% else %}
                         <a class="link-body-emphasis text-decoration-none" href="{% url 'users:load_image' %}">Upload
@@ -19,7 +19,7 @@ Profile
                         {% endif %}
                         <h5 class="my-3">{{ user.username }}</h5>
                         <p class="text-muted mb-1">{{ user.email }}
-                            {% if user.profile.is_active_email %}
+                            {% if user.is_active_email %}
                             confirmed
                             {%endif %}</p>
                         <p class="text-muted mb-4">total answers to questions:</p>
@@ -52,7 +52,7 @@ Profile
                                 <p class="mb-0">Date of Birth</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">{{user.profile.birthday}}</p>
+                                <p class="text-muted mb-0">{{user.birthday}}</p>
                             </div>
                         </div>
                         <hr>
@@ -70,7 +70,7 @@ Profile
                                 <p class="mb-0">Language</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">{{ user.profile.language }}</p>
+                                <p class="text-muted mb-0">{{ user.language }}</p>
                             </div>
                         </div>
                         <hr>
@@ -79,7 +79,7 @@ Profile
                                 <p class="mb-0">Country</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0">{{ user.profile.country.country.name }}</p>
+                                <p class="text-muted mb-0">{{ user.country.country.name }}</p>
                             </div>
                         </div>
                     </div>

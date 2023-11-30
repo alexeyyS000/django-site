@@ -184,3 +184,6 @@ CELERY_RESULT_BACKEND = "redis://localhost:6379/3"
 
 
 MINIO_STORAGE_MEDIA_URL = "http://localhost:9000/local-media/"
+
+
+AUTH_USER_MODEL = "users.User"

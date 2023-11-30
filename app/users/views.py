@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_protect
 from .forms import LoginForm
 from .forms import UserAvatarUploadForm
 from .forms import UserCreationForm
-from .models import Profile
+from .models import User
 from .tasks import send_message
 from .utils import email_authenticate
 from .utils import generate_confirm_email
@@ -29,6 +29,7 @@ class RegisterUserView(View):
         context = {"form": UserCreationForm}
         return render(request, self.template_name, context)
 
+    @method_decorator(csrf_protect)
     def post(self, request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
@@ -61,7 +62,7 @@ class ImageUploadView(LoginRequiredMixin, View):
     template_name = "imgload.html"
 
     def post(self, request):
-        form = UserAvatarUploadForm(request.POST, request.FILES, instance=request.user.profile)
+        form = UserAvatarUploadForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
             img_obj = form.instance
@@ -99,9 +100,9 @@ def register_confirm(request, token):
     user_info = cache.get(redis_key) or {}
 
     if user_id := user_info.get("user_id"):
-        profile = get_object_or_404(Profile, user_id=user_id)
-        profile.is_active_email = True
-        profile.save(update_fields=["is_active_email"])
+        user = get_object_or_404(User, id=user_id)
+        user.is_active_email = True
+        user.save(update_fields=["is_active_email"])
         return redirect(to=reverse_lazy("users:profile"))
     else:
         return redirect(to=reverse_lazy("users:signup"))
