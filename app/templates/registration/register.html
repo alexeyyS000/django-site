@@ -11,31 +11,38 @@ Signup
         <h1 class="h3 mb-3 fw-normal">Please fill the form</h1>
         {{ form.errors }}
         <div class="form-floating">
-            <input type="username" class="form-control" name="username" id="username" placeholder="Username">
+            <input type="username" class="form-control" name="username" id="username" placeholder="Username"
+                value="{% if form.username.value and not form.username.errors%}{{ form.username.value }}{% endif %}">
             <label for="username">Username</label>
         </div>
         <div class="form-floating">
-            <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+            <input type="email" class="form-control" name="email" id="email" placeholder="Email"
+                value="{% if form.email.value and not form.email.errors %}{{ form.email.value }}{% endif %}">
             <label for="email">Email address</label>
         </div>
         <div class="form-floating">
-            <input type="first_name" class="form-control" name="first_name" id="first_name" placeholder="first_name">
+            <input type="first_name" class="form-control" name="first_name" id="first_name" placeholder="first_name"
+                value="{% if form.first_name.value and not form.first_name.errors%}{{ form.first_name.value }}{% endif %}">
             <label for="first_name">First name</label>
         </div>
         <div class="form-floating">
-            <input type="last_name" class="form-control" name="last_name" id="last_name" placeholder="last_name">
+            <input type="last_name" class="form-control" name="last_name" id="last_name" placeholder="last_name"
+                value="{% if form.last_name.value and not form.last_name.errors%}{{ form.last_name.value }}{% endif %}">
             <label for="last_name">Last name</label>
         </div>
         <div class="form-floating">
-            <input type="birthday" class="form-control" name="birthday" id="birthday" placeholder="birthday">
+            <input type="birthday" class="form-control" name="birthday" id="birthday" placeholder="birthday"
+                value="{% if form.birthday.value and not form.birthday.errors%}{{ form.birthday.value }}{% endif %}">
             <label for="birthday">birthday</label>
         </div>
         <div class="form-floating">
-            <input type="password" class="form-control" name="password1" id="pwd1" placeholder="Password">
+            <input type="password" class="form-control" name="password1" id="pwd1" placeholder="Password"
+                value="{% if form.password1.value and not form.password2.errors%}{{ form.password1.value }}{% endif %}">
             <label for="pwd1">Password</label>
         </div>
         <div class="form-floating">
-            <input type="password" class="form-control" name="password2" id="pwd2" placeholder="Repeat Password">
+            <input type="password" class="form-control" name="password2" id="pwd2" placeholder="Repeat Password"
+                value="{% if form.password2.value and not form.password2.errors%}{{ form.password2.value }}{% endif %}">
             <label for="pwd2">Repeat Password</label>
         </div>
         <select class="form-select form-select-sm" name='country' id="id_country">
