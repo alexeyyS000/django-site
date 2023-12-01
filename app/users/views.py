@@ -68,6 +68,8 @@ class ImageUploadView(LoginRequiredMixin, View):
             img_obj = form.instance
             context = {"form": form, "img_obj": img_obj}
             return render(request, self.template_name, context)
+        context = {"form": form}
+        return render(request, self.template_name, context)
 
     def get(self, request):
         form = UserAvatarUploadForm()

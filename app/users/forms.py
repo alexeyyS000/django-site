@@ -77,6 +77,20 @@ class UserAvatarUploadForm(forms.ModelForm):
         model = User
         fields = ("avatar",)
 
+    def clean_avatar(self):
+        avatar = self.cleaned_data.get("avatar")
+        if avatar:
+            if "image" != avatar.content_type[:5]:
+                raise ValidationError("it is not image type")
+
+            if avatar.size > 10000:
+                raise ValidationError("Image file too large ( > 10mb )")
+
+            return avatar
+
+        else:
+            raise ValidationError("Couldn't read uploaded image")
+
 
 class LoginForm(forms.Form):
     email = forms.EmailField(

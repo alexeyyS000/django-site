@@ -7,6 +7,13 @@ Load avatar
 <form class="mt-5" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="choosefilebutton">
+        {% if not form.avatar.errors %}
+        select image (less 10mb)
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{form.avatar.errors}}
+        </div>
+        {% endif %}
         {{form.avatar}}
         <div style="margin-top:20px;">
             <button class="btn btn-secondary btn-sm" type="submit">Upload</button>
