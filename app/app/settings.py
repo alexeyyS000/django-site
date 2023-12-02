@@ -179,11 +179,11 @@ USER_CONFIRMATION_KEY = "user_confirmation_{token}"
 USER_CONFIRMATION_TIMEOUT = 300
 
 
-CELERY_BROKER_URL = "redis://localhost:6379/2"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/3"
+CELERY_BROKER_URL = "redis://redis:6379/2"
+CELERY_RESULT_BACKEND = "redis://redis:6379/3"
 
 
-MINIO_STORAGE_MEDIA_URL = "http://localhost:9000/local-media/"
 
+MINIO_STORAGE_MEDIA_URL = "http://localhost:80/static/local-media/"
 
 AUTH_USER_MODEL = "users.User"

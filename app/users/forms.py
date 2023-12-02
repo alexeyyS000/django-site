@@ -3,7 +3,7 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-
+from django.core.exceptions import ObjectDoesNotExist
 from .models import Country
 from .models import User
 from .utils import email_authenticate
@@ -18,7 +18,7 @@ class UserCreationForm(forms.ModelForm):
     country = CountryField(null=True, blank=True).formfield()
     language = forms.ChoiceField(choices=User.LANGUAGE_CHOICE)
 
-    birthday = forms.DateField(input_formats=["%Y-%m-%d", "%m/%d/%Y", "%m/%d/%y"])
+    birthday = forms.DateField()
 
     password1 = forms.CharField(
         label=_("Password"),
@@ -66,7 +66,10 @@ class UserCreationForm(forms.ModelForm):
         instance = super(UserCreationForm, self).save(commit=False)
         instance.set_password(self.cleaned_data["password1"])
         country = self.cleaned_data.get("country")
-        instance.country = Country.objects.get(country=country)
+        try:
+            instance.country = Country.objects.get(country=country)
+        except ObjectDoesNotExist:
+            pass
         if commit:
             instance.save()
         return instance
