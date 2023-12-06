@@ -3,6 +3,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpRequest
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -26,12 +29,12 @@ from .utils import set_verification_token
 class RegisterUserView(View):
     template_name = "registration/register.html"
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         context = {"form": UserCreationForm}
         return render(request, self.template_name, context)
 
     @method_decorator(csrf_protect)
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponseRedirect | HttpResponse:
         form = UserCreationForm(request.POST)
         if form.is_valid():
             form.save()
@@ -40,7 +43,6 @@ class RegisterUserView(View):
             email = form.cleaned_data.get("email")
             user = authenticate(username=username, password=password)
             token = generate_token()
-            print(token)
             set_verification_token(
                 token, settings.USER_CONFIRMATION_TIMEOUT, settings.USER_CONFIRMATION_KEY, **{"user_id": user.id}
             )
@@ -55,7 +57,7 @@ class RegisterUserView(View):
 class ProfileView(LoginRequiredMixin, View):
     template_name = "profile.html"
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         context = {"form": AuthenticationForm}
         return render(request, self.template_name, context)
 
@@ -63,7 +65,7 @@ class ProfileView(LoginRequiredMixin, View):
 class ImageUploadView(LoginRequiredMixin, View):
     template_name = "imgload.html"
 
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponse:
         form = UserAvatarUploadForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
@@ -73,7 +75,7 @@ class ImageUploadView(LoginRequiredMixin, View):
         context = {"form": form}
         return render(request, self.template_name, context)
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         form = UserAvatarUploadForm()
         context = {"form": form}
         return render(request, self.template_name, context)
@@ -82,12 +84,12 @@ class ImageUploadView(LoginRequiredMixin, View):
 class LoginView(View):
     template_name = "registration/login.html"
 
-    def get(self, request):
+    def get(self, request: HttpRequest) -> HttpResponse:
         context = {"form": LoginForm}
         return render(request, self.template_name, context)
 
     @method_decorator(csrf_protect)
-    def post(self, request):
+    def post(self, request: HttpRequest) -> HttpResponseRedirect | HttpResponse:
         form = LoginForm(request.POST)
         if form.is_valid():
             password = form.cleaned_data.get("password")
@@ -99,8 +101,7 @@ class LoginView(View):
         return render(request, self.template_name, context)
 
 
-def register_confirm(request, token):
-    print(token)
+def register_confirm(request: HttpRequest, token: str) -> HttpResponseRedirect:
     redis_key = settings.USER_CONFIRMATION_KEY.format(token=token)
     user_info = get_cache(redis_key)
 
