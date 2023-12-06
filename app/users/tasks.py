@@ -1,12 +1,11 @@
 from celery import shared_task
 from django.core.mail import EmailMessage
+from django.utils.translation import gettext_lazy as _
 
 
 @shared_task
-def send_message(serialized_email):
-    serialized_email.pop("extra_headers")
-    EmailMessage(**serialized_email).send()
-    # изза ошибки "Object of type EmailMessage is not JSON serializable"
-    # приходится сериализовать обьект в словарь перед передачей в delay()
-    # и потом десериализовать здесь "EmailMessage(**email)", перед этим удалив поле extra_headers так как send() без этого не проходит
+def send_confirm_message(confirm_link, email_adress):
+    message = _(f"follow this link %s \n" f"to confirm! \n" % confirm_link)
+    email = EmailMessage("please confirm your eamail", message, to=[email_adress])
+    email.send()
     return 0

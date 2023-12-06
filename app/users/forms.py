@@ -1,9 +1,13 @@
+from datetime import date
+
 from django import forms
 from django.contrib.auth import password_validation
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-from django.core.exceptions import ObjectDoesNotExist
+from django_countries.widgets import CountrySelectWidget
+
 from .models import Country
 from .models import User
 from .utils import email_authenticate
@@ -43,6 +47,7 @@ class UserCreationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("username", "email", "first_name", "last_name", "birthday", "language")
+        widgets = {"country": CountrySelectWidget()}
 
     def clean_email(self):
         email = self.cleaned_data.get("email")
@@ -62,6 +67,14 @@ class UserCreationForm(forms.ModelForm):
             )
         return password2
 
+    def clean_birthday(self):
+        birthday = self.cleaned_data.get("birthday")
+        if birthday > date.today():
+            msg = "Incorrect date"
+            self.add_error("birthday", msg)
+
+        return birthday
+
     def save(self, commit=True):
         instance = super(UserCreationForm, self).save(commit=False)
         instance.set_password(self.cleaned_data["password1"])
@@ -79,20 +92,6 @@ class UserAvatarUploadForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ("avatar",)
-
-    def clean_avatar(self):
-        avatar = self.cleaned_data.get("avatar")
-        if avatar:
-            if "image" != avatar.content_type[:5]:
-                raise ValidationError("it is not image type")
-
-            if avatar.size > 10000:
-                raise ValidationError("Image file too large ( > 10mb )")
-
-            return avatar
-
-        else:
-            raise ValidationError("Couldn't read uploaded image")
 
 
 class LoginForm(forms.Form):

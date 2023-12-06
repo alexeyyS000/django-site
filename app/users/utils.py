@@ -1,18 +1,15 @@
 import uuid
 
-from django.contrib.auth import get_user_model
 from django.core.cache import cache
-from django.core.mail import EmailMessage
 from django.urls import reverse_lazy
-from django.utils.translation import gettext_lazy as _
 
-UserModel = get_user_model()
+from .models import User
 
 
-def email_authenticate(email: str, password: str):
+def email_authenticate(email: str, password: str) -> User | None:
     try:
-        user = UserModel.objects.get(email=email)
-    except UserModel.DoesNotExist:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
         return None
     else:
         if user.check_password(password):
@@ -20,15 +17,21 @@ def email_authenticate(email: str, password: str):
     return None
 
 
-def generate_confirm_email(request, token, email: str):
+def generate_confirm_link(request, token) -> str:
     confirm_link = request.build_absolute_uri(reverse_lazy("users:register_confirm", kwargs={"token": token}))
-    message = _(f"follow this link %s \n" f"to confirm! \n" % confirm_link)
-    email = EmailMessage("please confirm your eamail", message, to=[email])
-    return email
+    return confirm_link
 
 
-def set_cache(timeout: int, temlpale: str, **kwargs):
-    token = uuid.uuid4().hex
+def set_verification_token(token, timeout: int, temlpale: str, **kwargs):
     redis_key = temlpale.format(token=token)
-    cache.set(redis_key, kwargs, timeout=timeout)
-    return token
+    set_cache = cache.set(redis_key, kwargs, timeout=timeout)
+    return set_cache
+
+
+def get_cache(redis_key):
+    get_cache = cache.get(redis_key) or {}
+    return get_cache
+
+
+def generate_token():
+    return uuid.uuid4().hex

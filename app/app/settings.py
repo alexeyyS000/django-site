@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "polls.apps.PollsConfig",
     "users.apps.UsersConfig",
     "minio_storage",
+    "django_countries",
 ]
 
 MIDDLEWARE = [
@@ -150,12 +151,11 @@ MINIO_STORAGE_ACCESS_KEY = config.MINIO_STORAGE_ACCESS_KEY
 MINIO_STORAGE_SECRET_KEY = config.MINIO_STORAGE_SECRET_KEY
 MINIO_STORAGE_USE_HTTPS = False
 MINIO_STORAGE_MEDIA_BUCKET_NAME = "local-media"
-MINIO_STORAGE_MEDIA_BACKUP_BUCKET = "Recycle Bin"
+MINIO_STORAGE_MEDIA_BACKUP_BUCKET = "local-media"
 MINIO_STORAGE_MEDIA_BACKUP_FORMAT = "%c/"
 MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
 MINIO_STORAGE_STATIC_BUCKET_NAME = "local-static"
 MINIO_STORAGE_AUTO_CREATE_STATIC_BUCKET = True
-
 
 EMAIL_HOST = "smtp.yandex.ru"
 EMAIL_PORT = 465
@@ -179,9 +179,10 @@ USER_CONFIRMATION_KEY = "user_confirmation_{token}"
 USER_CONFIRMATION_TIMEOUT = 300
 
 
-CELERY_BROKER_URL = "redis://redis:6379/2"
-CELERY_RESULT_BACKEND = "redis://redis:6379/3"
-
+# CELERY_BROKER_URL = "redis://redis:6379/2"
+# CELERY_RESULT_BACKEND = "redis://redis:6379/3"
+CELERY_BROKER_URL = "redis://localhost:6379/2"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/3"
 
 
 MINIO_STORAGE_MEDIA_URL = "http://localhost:80/static/local-media/"

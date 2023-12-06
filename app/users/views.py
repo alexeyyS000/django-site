@@ -3,7 +3,6 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -16,10 +15,12 @@ from .forms import LoginForm
 from .forms import UserAvatarUploadForm
 from .forms import UserCreationForm
 from .models import User
-from .tasks import send_message
+from .tasks import send_confirm_message
 from .utils import email_authenticate
-from .utils import generate_confirm_email
-from .utils import set_cache
+from .utils import generate_confirm_link
+from .utils import generate_token
+from .utils import get_cache
+from .utils import set_verification_token
 
 
 class RegisterUserView(View):
@@ -38,12 +39,13 @@ class RegisterUserView(View):
             username = form.cleaned_data.get("username")
             email = form.cleaned_data.get("email")
             user = authenticate(username=username, password=password)
-            token = set_cache(
-                settings.USER_CONFIRMATION_TIMEOUT, settings.USER_CONFIRMATION_KEY, **{"user_id": user.id}
+            token = generate_token()
+            print(token)
+            set_verification_token(
+                token, settings.USER_CONFIRMATION_TIMEOUT, settings.USER_CONFIRMATION_KEY, **{"user_id": user.id}
             )
-            email = generate_confirm_email(request, token, email)
-            serialized_email = email.__dict__
-            send_message.delay(serialized_email)
+            confirm_link = generate_confirm_link(request, token)
+            send_confirm_message.delay(confirm_link, email)
             login(request, user)
             return redirect("home")
         context = {"form": form}
@@ -98,8 +100,9 @@ class LoginView(View):
 
 
 def register_confirm(request, token):
+    print(token)
     redis_key = settings.USER_CONFIRMATION_KEY.format(token=token)
-    user_info = cache.get(redis_key) or {}
+    user_info = get_cache(redis_key)
 
     if user_id := user_info.get("user_id"):
         user = get_object_or_404(User, id=user_id)
