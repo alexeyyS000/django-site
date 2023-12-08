@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.views import PasswordResetView
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -112,3 +114,11 @@ def register_confirm(request: HttpRequest, token: str) -> HttpResponseRedirect:
         return redirect(to=reverse_lazy("users:profile"))
     else:
         return redirect(to=reverse_lazy("users:signup"))
+
+
+class PasswordResetView(PasswordResetView):
+    success_url = reverse_lazy("users:password_reset_done")
+
+
+class PasswordResetConfirmView(PasswordResetConfirmView):
+    success_url = reverse_lazy("users:password_reset_complete")
