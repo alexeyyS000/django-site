@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<head>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'polls/style.css' %}">
+    <title> Home page </title>
+</head>
+
+<body>
+{% if latest_tests_list %}
+<ul>
+    {% for test in latest_tests_list %}
+    <li><a href="{% url 'polls:detailtest' test.id %}">{{ test.name }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No tests are available.</p>
+{% endif %}
+</body>

@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.decorators.csrf import csrf_protect
 
@@ -20,12 +21,13 @@ from .forms import LoginForm
 from .forms import UserAvatarUploadForm
 from .forms import UserCreationForm
 from .models import User
-from .tasks import send_confirm_message
-from .utils import email_authenticate
-from .utils import generate_confirm_link
-from .utils import generate_token
-from .utils import get_cache
-from .utils import set_verification_token
+from .tasks import send_message
+from .utils.utils import CustomPasswordResetForm
+from .utils.utils import email_authenticate
+from .utils.utils import generate_confirm_link
+from .utils.utils import generate_token
+from .utils.utils import get_cache
+from .utils.utils import set_verification_token
 
 
 class RegisterUserView(View):
@@ -49,7 +51,15 @@ class RegisterUserView(View):
                 token, settings.USER_CONFIRMATION_TIMEOUT, settings.USER_CONFIRMATION_KEY, **{"user_id": user.id}
             )
             confirm_link = generate_confirm_link(request, token)
-            send_confirm_message.delay(confirm_link, email)
+            send_message.delay(
+                None,
+                "please confirm your eamail",
+                _(f"follow this link %s \n" f"to confirm! \n" % confirm_link),
+                None,
+                [
+                    email,
+                ],
+            )
             login(request, user)
             return redirect("home")
         context = {"form": form}
@@ -116,9 +126,10 @@ def register_confirm(request: HttpRequest, token: str) -> HttpResponseRedirect:
         return redirect(to=reverse_lazy("users:signup"))
 
 
-class PasswordResetView(PasswordResetView):
+class CustomPasswordResetView(PasswordResetView):
     success_url = reverse_lazy("users:password_reset_done")
+    form_class = CustomPasswordResetForm
 
 
-class PasswordResetConfirmView(PasswordResetConfirmView):
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy("users:password_reset_complete")

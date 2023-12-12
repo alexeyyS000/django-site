@@ -2,15 +2,12 @@ from datetime import date
 
 from django import forms
 from django.contrib.auth import password_validation
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
 
-from .models import Country
 from .models import User
-from .utils import email_authenticate
+from .utils.utils import email_authenticate
 
 
 class UserCreationForm(forms.ModelForm):
@@ -19,7 +16,6 @@ class UserCreationForm(forms.ModelForm):
         max_length=256,
         widget=forms.EmailInput(attrs={"autocomplete": "email"}),
     )
-    country = CountryField(null=True, blank=True).formfield()
     language = forms.ChoiceField(choices=User.LANGUAGE_CHOICE)
 
     birthday = forms.DateField()
@@ -46,7 +42,7 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ("username", "email", "first_name", "last_name", "birthday", "language")
+        fields = ("username", "email", "first_name", "last_name", "birthday", "language", "country")
         widgets = {"country": CountrySelectWidget()}
 
     def clean_email(self):
@@ -78,11 +74,6 @@ class UserCreationForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super(UserCreationForm, self).save(commit=False)
         instance.set_password(self.cleaned_data["password1"])
-        country = self.cleaned_data.get("country")
-        try:
-            instance.country = Country.objects.get(country=country)
-        except ObjectDoesNotExist:
-            pass
         if commit:
             instance.save()
         return instance

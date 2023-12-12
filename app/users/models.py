@@ -4,13 +4,7 @@ from django.db import models
 from django.dispatch import receiver
 from django_countries.fields import CountryField
 
-from .formatChecker import (
-    SizeRestrictedImageField,  # не получилось поместить класс в utils так как происходит ошибка переопределения user так как он там используется
-)
-
-
-class Country(models.Model):
-    country = CountryField()
+from .utils.format_checker import SizeRestrictedImageField
 
 
 class User(AbstractUser):
@@ -19,7 +13,7 @@ class User(AbstractUser):
     birthday = models.DateField(null=True)
     is_active_email = models.BooleanField(default=False)
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICE, default="EN")
-    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=True, default=None)
+    country = CountryField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
 
 
