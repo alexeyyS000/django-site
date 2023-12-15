@@ -39,7 +39,7 @@ class TestAdmin(admin.ModelAdmin):
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ["question_text", "test"]
     fieldsets = [
-        (None, {"fields": ["question_text", 'test']}),
+        (None, {"fields": ["question_text", "test"]}),
     ]
     inlines = [ChoiceInline]
 
