@@ -9,7 +9,8 @@
 {% if latest_tests_list %}
 <ul>
     {% for test in latest_tests_list %}
-    <li><a href="{% url 'polls:detailtest' test.id %}">{{ test.name }}</a></li>
+    <li><a href="{% url 'polls:firstquestion' test.id test.question_set.first.id%}">{{ test.name }}</a></li>
+    {{ test.question_set.first }} как он это делает ?
     {% endfor %}
 </ul>
 {% else %}

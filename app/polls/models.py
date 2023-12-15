@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.contrib.auth import get_user_model
+UserModel = get_user_model()
 
 class Test(models.Model):
     name = models.CharField(max_length=32, null=False)
@@ -26,3 +27,9 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+
+
+class TestState(models.Model):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer = models.BooleanField()

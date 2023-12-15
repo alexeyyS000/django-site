@@ -1,12 +1,26 @@
-<form action="{% url 'polls:vote' question.id %}" method="post">
+<form action="{% url 'polls:vote' test_number question.id%}" method="post">
     {% csrf_token %}
     <fieldset>
         <legend><h1>{{ question.question_text }}</h1></legend>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
         {% for choice in question.choice_set.all %}
-        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice }}">
         <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
         {% endfor %}
     </fieldset>
+    {%if not is_complete_question%}
     <input type="submit" value="Vote">
+    {%else%}
+    this question answered
+    {%endif%}
 </form>
+
+{% if all_polls_list %}
+<ul>
+    {% for question in all_polls_list %}
+    <li><a href="{% url 'polls:firstquestion' test_number question.id%}">{{ question.question_text }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No polls are available.</p>
+{% endif %}
