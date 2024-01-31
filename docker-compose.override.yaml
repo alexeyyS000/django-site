@@ -12,3 +12,8 @@ services:
   redis:
     ports:
       - 6379:6379
+
+  mailpit:
+    ports:
+      - 8025:8025
+      - 1025:1025

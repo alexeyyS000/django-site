@@ -11,4 +11,4 @@ def send_message(
     if html_email is not None:
         email_message.attach_alternative(html_email, "text/html")
     email_message.send()
-    return 0  # как кидать ошибки отсюда в джангу
+    return 0

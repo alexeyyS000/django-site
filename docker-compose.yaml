@@ -19,10 +19,10 @@ services:
   minio:
     image: minio/minio:RELEASE.2021-04-06T23-11-00Z
     volumes:
-      - data:/data
+      - minio-data:/minio-data
     env_file:
       - .env
-    command: minio server /data/minio/
+    command: minio server /minio-data/minio/
 
   nginx:
     build: nginx
@@ -34,7 +34,12 @@ services:
     restart: always
     image: redis:7.0-alpine
     
+  mailpit:
+    image: axllent/mailpit
+    restart: always
+    volumes:
+      - ./mailpit-data:/mailpit-data
 volumes:
   postgres-data:
-  data:
+  minio-data:
   

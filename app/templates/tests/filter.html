@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% block title %}
+Filter
+{% endblock %}
+{% block content %}
+
+
+
+<div class="w3-padding w3-white notranslate" style="background-color:#fff!important;color:#333!important">
+    <div style="width:100%">
+        <p style="margin-top:3%">Searching in tests by name and tags:</p>
+
+        <form method="get">
+            <div class="row g-3 align-items-center">
+
+                <div class="col-auto">
+                    <label for="inputPassword6" class="col-form-label">Name contains:</label>
+                </div>
+                <div class="col-auto">
+                    <input id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline" name="name">
+                </div>
+                <div class="col-auto">
+                    <label for="inputPassword6" class="col-form-label">Tags:</label>
+                </div>
+                <div class="col-auto">
+                    <input id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline" name="tag"
+                        placeholder="tags separated by spaces">
+
+                </div>
+
+                <div class="col-auto">
+                    <label for="inputPassword6" class="col-form-label">Order by:</label>
+                </div>
+                <div class="col-auto">
+                    {{filterform.ordering}}
+
+                </div>
+         
+
+                <label for="size" class="col-form-label">page:</label>
+                <div class="col-md-1">
+                    <input type="text" class="form-control" id="size" name="page_size" placeholder="size">
+                </div>
+                <div class="col-md-1">
+                    <input type="text" class="form-control" name="page_number" placeholder="num">
+                </div>
+
+
+                <div class="mt-3 d-flex justify-content-between">
+
+                    <button class="btn btn-primary" type="submit">Submit</button>
+
+                </div>
+
+            </div>
+        </form>
+
+
+
+        <br>
+        <table class="table table-bordered table-striped" style="background-color:#fff;color:#333;">
+            <thead>
+                <tr>
+                    <th>test name</th>
+                    <th>tags</th>
+                    <th>discription</th>
+                </tr>
+            </thead>
+            <tbody id="myTable">
+                {% for obj in page %}
+                <tr>
+                    <td>{{obj.name}}</td>
+                    <td>{% for tag in obj.tag.all %} {{tag}} {% endfor %}</td>
+                    <td>{{obj.description}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,9 +1,12 @@
+from django import forms
 from django.contrib import admin
+from django.contrib.admin.widgets import AdminTimeWidget
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from .models import Choice
 from .models import Question
+from .models import Tag
 from .models import Test
 
 
@@ -16,6 +19,13 @@ class EditLinkToInlineObject(object):
             return ""
 
 
+class TagAdmin(admin.ModelAdmin):
+    list_display = ["name"]
+    fieldsets = [
+        (None, {"fields": ["name"]}),
+    ]
+
+
 class ChoiceInline(admin.TabularInline):
     model = Choice
     extra = 3
@@ -23,17 +33,34 @@ class ChoiceInline(admin.TabularInline):
 
 class QuestionInline(EditLinkToInlineObject, admin.TabularInline):
     model = Question
-    inlines = [ChoiceInline]
     extra = 1
     readonly_fields = ("edit_link",)
 
 
+# class StopAdminForm(forms.ModelForm):
+#     list_display = ["name", ]
+#     fieldsets = [
+#         (None, {"fields": ["name", "description", "tag", "time_for_complite"]}),
+#     ]
+#     class Meta:
+#         model = Test
+#         widgets = {
+#         'time_for_complite': AdminTimeWidget(),
+#         }
+#         fields = '__all__'
+
+
 class TestAdmin(admin.ModelAdmin):
-    list_display = ["name", "tags"]
+    list_display = [
+        "name",
+    ]
     fieldsets = [
-        (None, {"fields": ["name", "description", "tags", "time_for_complite"]}),
+        (None, {"fields": ["name", "description", "tag", "time_for_complete"]}),
     ]
     inlines = [QuestionInline]
+    # widgets = {
+    # 'time_for_complite': AdminTimeWidget(),
+    # }
 
 
 class QuestionAdmin(admin.ModelAdmin):
@@ -46,3 +73,4 @@ class QuestionAdmin(admin.ModelAdmin):
 
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Test, TestAdmin)
+admin.site.register(Tag, TagAdmin)

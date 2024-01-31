@@ -15,6 +15,7 @@ class User(AbstractUser):
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICE, default="EN")
     country = CountryField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
+    done_tests = models.ManyToManyField(to="quizzes.Test")
 
 
 @receiver(models.signals.pre_save, sender=User)

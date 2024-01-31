@@ -41,10 +41,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "polls.apps.PollsConfig",
+    "quizzes.apps.QuizzesConfig",
     "users.apps.UsersConfig",
     "minio_storage",
     "django_countries",
+    "django_filters",
 ]
 
 MIDDLEWARE = [

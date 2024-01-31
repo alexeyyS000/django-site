@@ -1,0 +1,76 @@
+<!-- {% extends 'base.html' %}
+{% block title %}
+Question
+{% endblock %}
+{% block content %}
+<form action="{% url 'polls:vote' test_number question.id%}" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>
+            <h1>{{ question.question_text }}</h1>
+        </legend>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+        {% for choice in question.choice_set.all %}
+        <input type="checkbox" name="{{choice.id}}" id="choice{{ forloop.counter }}" value="{{ choice }}">
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+        {% endfor %}
+    </fieldset>
+    {%if not is_answered_question%}
+    <input type="submit" value="Vote">
+    {%else%}
+    this question answered
+    {%endif%}
+</form>
+
+
+
+{% if all_polls_list %}
+<ul>
+    {% for question in all_polls_list %}
+    <li><a onclick="setTime()" href="{% url 'polls:firstquestion' test_number question.id%}">{{ question.question_text }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No polls are available.</p>
+{% endif %}
+
+
+<p id="Timer"></p>
+
+<script>
+function timeEnd() {
+  localStorage.removeItem('{{test_number}}');
+  location.replace("{% url 'polls:result' test_number %}")
+}
+
+function setTime() {
+  localStorage.setItem('{{test_number}}', time);
+}
+
+
+function UpdateTimer(){
+    const minutes = Math.floor(time / 60);
+    let seconds = time % 60;
+    seconds = seconds < 10 ? "0" + seconds:seconds;
+    countDown.innerHTML = `${minutes}:${seconds}`;
+    if (time <= 0){timeEnd();}
+    time--;
+}
+
+
+let time = localStorage.getItem('{{test_number}}');
+if (time == null) {time =  Number('{{time_for_complete}}');}
+
+
+const countDown = document.getElementById('Timer');
+setInterval(UpdateTimer, 1000)
+
+
+
+</script>
+
+ <!-- {% load static %}
+ <script type="text/javascript" src="{% static 'polls/script.js' %}"></script> -->
+
+{% endblock %} -->
