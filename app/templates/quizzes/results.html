@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}
+Result
+{% endblock %}
+{% block content %}
+<h1>{{ test }} is comlete</h1>
+<br>
+<table class="table table-bordered" style="width: 70%; background-color:#fff;color:#333;">
+    <thead>
+        <tr>
+            <th>question</th>
+            <th style="width: 4%;"></th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+        {% for obj in results %}
+        {% if obj.answer %}
+        <tr style="background-color: rgba(0, 128, 0, 0.23);">
+            <td>{{obj.question}}</td>
+            <td>✅</td>
+        </tr>
+        {%else%}
+        <tr style="background-color:rgba(255, 0, 0, 0.29);">
+            <td>{{obj.question}}</td>
+            <td>❌</td>
+        </tr>
+        {%endif%}
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

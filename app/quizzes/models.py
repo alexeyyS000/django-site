@@ -23,8 +23,6 @@ class Test(models.Model):
     def __str__(self):
         return self.name
 
-    def time_in_seconds(self):
-        return (self.time_for_complete.hour * 60 + self.time_for_complete.minute) * 60 + self.time_for_complete.second
 
     def time_to_timedelta(self):
         return datetime.timedelta(
@@ -37,10 +35,10 @@ class Test(models.Model):
 
 class Question(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
-    question_text = models.CharField(max_length=256)
+    text = models.CharField(max_length=256)
 
     def __str__(self):
-        return self.question_text
+        return self.text
 
 
 class Choice(models.Model):
@@ -57,12 +55,12 @@ class TestState(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.BooleanField()
-    # time_start = models.TimeField(null=False)#можно ли не создавать таблицу ради этой строки и прописать здесь time_start
-
+    # time_start = models.TimeField(null=False)
+    # можно ли не создавать таблицу TestPipeline ради этой строки и прописать здесь time_start, так будет меньше запросов но будет дублтроваться время во всех строках
 
 class TestPipeline(models.Model):
     time_start = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE
-    )  # не знаю нужен ли тут ForeignKey или можно просто int id
+    )
     test = models.ForeignKey(Test, on_delete=models.CASCADE)

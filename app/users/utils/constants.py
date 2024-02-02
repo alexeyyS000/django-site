@@ -1,0 +1,2 @@
+MAX_IMAGE_SIZE_BYTES = 10485760
+LANGUAGE_CHOICE = [("EN", "en"), ("RU", "ru")]

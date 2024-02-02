@@ -1,10 +1,7 @@
 from django import forms
 
 from .models import Choice
-from .models import TestPipeline
 from .models import TestState
-from .utils.utils import is_time_up
-from .utils.utils import time_to_timedelta
 
 
 class AnswerQuestionForm(forms.Form):
@@ -28,17 +25,6 @@ class AnswerQuestionForm(forms.Form):
         else:
             TestState.objects.get_or_create(user=user, test=test, question=self.question, defaults={"answer": False})
 
-
-class FilterForm(forms.Form):
-    ORDER_CHOICES = (
-        (None, "----"),
-        ("name", "name"),
-        ("create_date", "create date"),
-    )
-    order_field = forms.ChoiceField(choices=ORDER_CHOICES, required=False)
-    find_field = forms.CharField(required=False)
-    page_size = forms.IntegerField(required=True)
-    page_number = forms.IntegerField(required=True)
 
 
 class PaginationForm(forms.Form):

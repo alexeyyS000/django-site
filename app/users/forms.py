@@ -5,9 +5,9 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_countries.widgets import CountrySelectWidget
-
+from .utils.constants import LANGUAGE_CHOICE
 from .models import User
-from .utils.utils import email_authenticate
+from .utils.general import email_authenticate
 
 
 class UserCreationForm(forms.ModelForm):
@@ -16,7 +16,7 @@ class UserCreationForm(forms.ModelForm):
         max_length=256,
         widget=forms.EmailInput(attrs={"autocomplete": "email"}),
     )
-    language = forms.ChoiceField(choices=User.LANGUAGE_CHOICE)
+    language = forms.ChoiceField(choices=LANGUAGE_CHOICE)
 
     birthday = forms.DateField()
 

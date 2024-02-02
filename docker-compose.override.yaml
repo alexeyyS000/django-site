@@ -14,6 +14,10 @@ services:
       - 6379:6379
 
   mailpit:
+    image: axllent/mailpit
+    restart: always
+    volumes:
+      - ./mailpit-data:/mailpit-data
     ports:
       - 8025:8025
       - 1025:1025

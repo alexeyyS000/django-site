@@ -61,19 +61,26 @@ Filter
         <table class="table table-bordered table-striped" style="background-color:#fff;color:#333;">
             <thead>
                 <tr>
-                    <th>test name</th>
-                    <th>tags</th>
+                    <th style="width: 12%;">test name</th>
+                    <th style="width: 22%;">tags</th>
                     <th>discription</th>
                 </tr>
             </thead>
             <tbody id="myTable">
                 {% for obj in page %}
-                <tr>
-                    <td>{{obj.name}}</td>
+                <tr class="clickable"> 
+                    <td>  <a href="{% url 'quizzes:start_test' obj.id 1 %}" class="list-group-item list-group-item-action py-2">
+                        <div class="d-flex w-100 align-items-center justify-content-between">
+                          <strong class="mb-1">{{ obj.name }}</strong>
+                        </div>
+                      </a>
+                    </td>
                     <td>{% for tag in obj.tag.all %} {{tag}} {% endfor %}</td>
                     <td>{{obj.description}}</td>
                 </tr>
                 {% endfor %}
+
+            </tr> 
             </tbody>
         </table>
     </div>

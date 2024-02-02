@@ -4,12 +4,11 @@ from django.db import models
 from django.dispatch import receiver
 from django_countries.fields import CountryField
 
-from .utils.format_checker import SizeRestrictedImageField
-
+from .utils.models import SizeRestrictedImageField
+from .utils.constants import MAX_IMAGE_SIZE_BYTES, LANGUAGE_CHOICE
 
 class User(AbstractUser):
-    LANGUAGE_CHOICE = [("EN", "en"), ("RU", "ru")]
-    avatar = SizeRestrictedImageField(max_upload_size=10485760, null=True)
+    avatar = SizeRestrictedImageField(max_upload_size=MAX_IMAGE_SIZE_BYTES, null=True)
     birthday = models.DateField(null=True)
     is_active_email = models.BooleanField(default=False)
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICE, default="EN")
@@ -27,10 +26,9 @@ def delete_file_on_change_extension(sender, instance, **kwargs):
             return
         else:
             new_avatar = instance.avatar
-            print(new_avatar, old_avatar)
             if (
                 old_avatar and new_avatar and old_avatar.url != new_avatar.url
-            ):  # как проработать ситуацию удаления если вотография имеет то же название или она же
+            ): 
                 old_avatar.delete(save=False)
 
 

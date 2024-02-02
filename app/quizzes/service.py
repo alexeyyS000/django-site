@@ -1,9 +1,5 @@
 import django_filters
-from django.contrib.postgres.search import SearchVector
-from .models import Test, Tag
-from collections import OrderedDict
-from django import forms
-from django.core.paginator import Paginator
+from .models import Test
 
 
 class TestFilter(django_filters.FilterSet):
@@ -12,7 +8,7 @@ class TestFilter(django_filters.FilterSet):
 
     tag = django_filters.CharFilter(method="filter_search", label='find by tags(values separated by space)')
     
-    #или можно сделать пагинацию так, не знаю что лучше
+    #или можно сделать пагинацию так, так лучше, но таким образом невозможно передать лимит, он должен быть константой
 
     # page_num = django_filters.NumberFilter(label='page_num', method='pagination')
     
@@ -35,11 +31,3 @@ class TestFilter(django_filters.FilterSet):
     class Meta:
         model = Test
         fields = ["name"]
-
-    # @property
-    # def qs(self):
-    #     queryset=super(TestFilter, self).qs
-    #     if request.user.has_perm("app_label.has_permission"):       
-    #         return queryset.exclude(invited_user!=self.request.user)
-    #     return queryset   
-# django_filters.FilterSet.form

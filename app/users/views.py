@@ -22,12 +22,12 @@ from .forms import UserAvatarUploadForm
 from .forms import UserCreationForm
 from .models import User
 from .tasks import send_message
-from .utils.utils import CustomPasswordResetForm
-from .utils.utils import email_authenticate
-from .utils.utils import generate_confirm_link
-from .utils.utils import generate_token
-from .utils.utils import get_cache
-from .utils.utils import set_verification_token
+from .utils.general import CustomPasswordResetForm
+from .utils.general import email_authenticate
+from .utils.general import generate_confirm_link
+from .utils.general import generate_token
+from .utils.general import get_cache
+from .utils.general import set_verification_token
 
 
 class RegisterUserView(View):
