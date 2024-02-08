@@ -10,12 +10,14 @@ services:
       - postgres
       - minio
       - redis
-  # worker:
-  #   restart: always
-  #   build: .
-  #   command: celery -A app worker -l INFO
-  #   depends_on:
-  #     - app
+  worker:
+    restart: always
+    build: .
+    command: celery -A app worker -l INFO
+    env_file:
+      - .env
+    depends_on:
+      - app
 
   postgres:
     restart: always

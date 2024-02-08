@@ -30,23 +30,26 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
-                        </li>
-                        {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:profile' %}">{{ user }}</a>
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
+                            <a class="nav-link {% if 'quizzes' in request.path %}active{% endif %}" href="{% if user.is_authenticated %}{% url 'quizzes:find' %}{% else %}{% url 'users:login' %}{% endif %}">Tests</a>
                         </li>
-                        {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:login' %}">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'users:signup' %}">Registration</a>
-                        </li>
-                        {% endif %}
+                        <li class="position-absolute end-0 nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Account
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarScrollingDropdown">
+                              {% if user.is_authenticated %}
+                              <li><a class="dropdown-item" href="{% url 'users:profile' %}">{{ user }}</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a></li>
+                              {% else %}
+                              <li><a class="dropdown-item" href="{% url 'users:login' %}">Login</a></li>
+                              <li><a class="dropdown-item" href="{% url 'users:signup' %}">Registration</a></li>
+                              {% endif %}
+                            </ul>
+                          </li>
                     </ul>
                 </div>
             </div>

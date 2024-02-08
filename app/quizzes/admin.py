@@ -4,7 +4,7 @@ from .models import Choice
 from .models import Question
 from .models import Tag
 from .models import Test
-from .utils.utils import EditLinkToInlineObjectMixin
+from .utils.general import EditLinkToInlineObjectMixin
 
 
 @admin.register(Tag)

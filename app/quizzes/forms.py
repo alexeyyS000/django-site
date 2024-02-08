@@ -26,7 +26,3 @@ class AnswerQuestionForm(forms.Form):
             TestState.objects.get_or_create(user=user, test=test, question=self.question, defaults={"answer": False})
 
 
-
-class PaginationForm(forms.Form):
-    page_size = forms.IntegerField(required=True)
-    page_number = forms.IntegerField(required=True)

@@ -184,6 +184,6 @@ CELERY_BROKER_URL = config.CELERY_BROKER_URL
 CELERY_RESULT_BACKEND = config.CELERY_RESULT_BACKEND
 
 
-MINIO_STORAGE_MEDIA_URL = "http://localhost:80/static/local-media/"#host.docker.internal?
+MINIO_STORAGE_MEDIA_URL = "http://localhost:80/static/local-media/"
 
 AUTH_USER_MODEL = "users.User"

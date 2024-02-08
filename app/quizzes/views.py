@@ -8,17 +8,20 @@ from django.views import View
 from django.views import generic
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
-from .forms import AnswerQuestionForm,PaginationForm
+
+from .utils.constants import DEFAULT_SIZES_FILTER_PAGE
+from .forms import AnswerQuestionForm
 from .models import Question
 from .models import Test
 from .models import TestPipeline
 from .models import TestState
-from .utils.utils import chop_microseconds
-from .utils.utils import is_time_up
+from .utils.general import chop_microseconds
+from .utils.general import is_time_up
 from .service import TestFilter
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-class ListTestView(generic.ListView):
+class ListTestView(LoginRequiredMixin, generic.ListView):
     template_name = "quizzes/tests.html"
     context_object_name = "latest_tests_list"
 
@@ -28,7 +31,7 @@ class ListTestView(generic.ListView):
         return Test.objects.order_by("-created")[:20]
 
 
-class ResultView(View):
+class ResultView(LoginRequiredMixin, View):
     template_name = "quizzes/results.html"
 
     def get(self, request: HttpRequest, quiz_id) -> HttpResponse:
@@ -49,7 +52,7 @@ class ResultView(View):
         return render(request, self.template_name, context)
 
 
-class DetailQuestionView(View):# тут очень много дублирования кода, стоит ли делить на куски и выносить в отдельную функцию ?
+class DetailQuestionView(LoginRequiredMixin, View):# тут очень много дублирования кода, стоит ли делить на куски и выносить в отдельную функцию ?
     template_name = "quizzes/detailtest.html"
 
     def get(self, request: HttpRequest, quiz_id, question_number) -> HttpResponse:
@@ -100,26 +103,22 @@ class DetailQuestionView(View):# тут очень много дублирова
         return render(request, self.template_name, context)
 
 
-class FindView(View):
+class FindView(LoginRequiredMixin, View):
     template_name = "quizzes/filter.html"
 
     def get(self, request: HttpRequest) -> HttpResponse:
         filter = TestFilter(request.GET, queryset=Test.objects.all())
-        form = PaginationForm()
-        if request.GET: 
-            page_size = request.GET['page_size'] 
-            page_number = request.GET['page_number']
-        else:
-            page_size = 10000
-            page_number = 1
-        paginator = Paginator(filter.qs, page_size)#проблема в том что бьется на страницы уже имеющийся queryset, не знаю как это возможно сделать на уровне запроса 
-
-        current_page = paginator.page(page_number) 
-        
+        page_size = request.GET.get('page_size', DEFAULT_SIZES_FILTER_PAGE[1])
+        page_number = request.GET.get('page_number', 1)
+        paginator = Paginator(filter.qs, page_size)
+        current_page = paginator.page(page_number)
+        total_pages = paginator.num_pages
         context = {"filterform":filter.form,
-                    "paginationform":form,
                     "page": current_page.object_list,
                     "prev_page": current_page.previous_page_number() if current_page.number>1 else None,
                     "next_page": current_page.next_page_number() if current_page.number< paginator.num_pages else None,
+                    "total_pages": [i for i in range(1, total_pages+1)],
+                    "current_page": current_page.number,
+                    "list_of_sizes":DEFAULT_SIZES_FILTER_PAGE
                     }
         return render(request, self.template_name, context)
