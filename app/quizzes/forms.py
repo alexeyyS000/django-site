@@ -21,8 +21,8 @@ class AnswerQuestionForm(forms.Form):
         answers = {int(x) for x in self.cleaned_data.get("choices")}
         right_answers = {x.id for x in Choice.objects.filter(question=self.question, right_answer=True)}
         if answers == right_answers:
-            TestState.objects.get_or_create(user_id=user.id, test=test, question=self.question, defaults={"answer": True})
+            TestState.objects.get_or_create(
+                user_id=user.id, test=test, question=self.question, defaults={"answer": True}
+            )
         else:
             TestState.objects.get_or_create(user=user, test=test, question=self.question, defaults={"answer": False})
-
-

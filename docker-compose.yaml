@@ -10,6 +10,7 @@ services:
       - postgres
       - minio
       - redis
+      - mailpit
   worker:
     restart: always
     build: .
@@ -43,6 +44,26 @@ services:
   redis:
     restart: always
     image: redis:7.0-alpine
+
+  mailpit:
+    image: axllent/mailpit
+    restart: always
+    volumes:
+      - ./mailpit-data:/mailpit-data
+    ports:
+      - 8025:8025
+      - 1025:1025
+    env_file:
+      - .env
+
+  # mailhog:
+  #     image: mailhog/mailhog
+  #     container_name: mailhog
+  #     logging:
+  #         driver: 'none' # disable saving logs
+  #     ports:
+  #         - 1025:1025 # smtp server
+  #         - 8025:8025 # web ui
     
 volumes:
   postgres-data:

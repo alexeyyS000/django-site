@@ -25,3 +25,7 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("", TemplateView.as_view(template_name="home.html"), name="home"),
 ]
+
+
+handler404 = "app.views.page_not_found_view"
+handler400 = "app.views.page_bad_request_view"

@@ -1,6 +1,8 @@
 import datetime
+
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+
 
 def time_to_timedelta(time):
     return datetime.timedelta(hours=time.hour, minutes=time.minute, seconds=time.second, microseconds=time.microsecond)
@@ -16,7 +18,6 @@ def is_time_up(time_start, time_for_complete):
 
 def chop_microseconds(delta):
     return delta - datetime.timedelta(microseconds=delta.microseconds)
-
 
 
 class EditLinkToInlineObjectMixin(object):

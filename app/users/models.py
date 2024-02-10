@@ -4,8 +4,10 @@ from django.db import models
 from django.dispatch import receiver
 from django_countries.fields import CountryField
 
+from .utils.constants import LANGUAGE_CHOICE
+from .utils.constants import MAX_IMAGE_SIZE_BYTES
 from .utils.models import SizeRestrictedImageField
-from .utils.constants import MAX_IMAGE_SIZE_BYTES, LANGUAGE_CHOICE
+
 
 class User(AbstractUser):
     avatar = SizeRestrictedImageField(max_upload_size=MAX_IMAGE_SIZE_BYTES, null=True)
@@ -26,9 +28,7 @@ def delete_file_on_change_extension(sender, instance, **kwargs):
             return
         else:
             new_avatar = instance.avatar
-            if (
-                old_avatar and new_avatar and old_avatar.url != new_avatar.url
-            ): 
+            if old_avatar and new_avatar and old_avatar.url != new_avatar.url:
                 old_avatar.delete(save=False)
 
 

@@ -24,7 +24,6 @@ class QuestionInline(EditLinkToInlineObjectMixin, admin.TabularInline):
     readonly_fields = ("edit_link",)
 
 
-
 @admin.register(Test)
 class TestAdmin(admin.ModelAdmin):
     list_display = [
@@ -33,11 +32,13 @@ class TestAdmin(admin.ModelAdmin):
     fields = ["name", "description", "tag", "time_for_complete"]
     inlines = [QuestionInline]
 
+    def save_model(self, request, obj, form, change):
+        obj.author = request.user
+        super().save_model(request, obj, form, change)
+
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ["text", "test"]
     fields = ["text", "test"]
     inlines = [ChoiceInline]
-
-

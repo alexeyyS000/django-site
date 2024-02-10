@@ -5,8 +5,9 @@ from django.contrib.auth import password_validation
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django_countries.widgets import CountrySelectWidget
-from .utils.constants import LANGUAGE_CHOICE
+
 from .models import User
+from .utils.constants import LANGUAGE_CHOICE
 from .utils.general import email_authenticate
 
 

@@ -28,7 +28,7 @@ SECRET_KEY = config.SECRET_KEY
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "app", "158.160.43.177"]
+ALLOWED_HOSTS = [f"{config.HOST}", "app"]
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
@@ -141,9 +141,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://nginx.your-domain.com",
     "https://www.nginx.your-domain.com",
     "http://nginx.your-domain.com",
-    "http://localhost:80",
-    "http://158.160.43.177",
-    "http://158.160.43.177:80",
+    f"http://{config.HOST}:80",
 ]
 
 DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
@@ -158,15 +156,22 @@ MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
 MINIO_STORAGE_STATIC_BUCKET_NAME = "local-static"
 MINIO_STORAGE_AUTO_CREATE_STATIC_BUCKET = True
 
-EMAIL_HOST = "smtp.yandex.ru"
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+if config.IS_DEV_MAIL == "True":
+    EMAIL_HOST = "mailpit"
+    EMAIL_PORT = 1025
+    EMAIL_HOST_USER = ""
+    EMAIL_HOST_PASSWORD = ""
+    DEFAULT_FROM_EMAIL = "test@mail.com"
+else:
+    EMAIL_HOST = "smtp.yandex.ru"
+    EMAIL_PORT = 465
+    EMAIL_USE_TLS = False
+    EMAIL_USE_SSL = True
 
-EMAIL_HOST_USER = config.EMAIL_HOST_USER
-EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
-DEFAULT_FROM_EMAIL = config.DEFAULT_FROM_EMAIL
-
+    EMAIL_HOST_USER = config.EMAIL_HOST_USER
+    EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
+    DEFAULT_FROM_EMAIL = config.DEFAULT_FROM_EMAIL
+    # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 CACHES = {
     "default": {
@@ -184,6 +189,8 @@ CELERY_BROKER_URL = config.CELERY_BROKER_URL
 CELERY_RESULT_BACKEND = config.CELERY_RESULT_BACKEND
 
 
-MINIO_STORAGE_MEDIA_URL = "http://localhost:80/static/local-media/"
+MINIO_STORAGE_MEDIA_URL = f"http://{config.HOST}:80/static/local-media/"
 
 AUTH_USER_MODEL = "users.User"
+
+DEBUG=True
