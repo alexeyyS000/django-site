@@ -36,7 +36,6 @@ Filter
                         <label for="inputPassword6" class="col-form-label">Order by:&emsp;&emsp;&emsp;</label>
                     </div>
                     <div class="col-auto">
-                        <!-- {{filterform.ordering}} -->
                         <select class="form-select form-select-sm" name="ordering" id="id_language">
                             {% for order in filterform.ordering %}
                             {{order}}
@@ -70,10 +69,6 @@ Filter
                             {% endif %}
                         </select>
                     </div>
-                    <!-- <div class="col-md-1">
-                    <input type="text" class="form-control" name="page_number" placeholder="num">
-                </div> -->
-
 
                     <div class="mt-3 d-flex justify-content-between">
 
@@ -120,7 +115,6 @@ Filter
         <ul class="pagination justify-content-center">
             {%for i in total_pages%}
             {% if i is not current_page%}
-            <!-- {{current_page}} -->
             <li class="page-item"><a class="page-link"
                     href="?name={{ request.GET.name }}&tag={{ request.GET.tag }}&ordering={{ request.GET.ordering }}&page_size={{ request.GET.page_size }}&page_number={{i}}">{{i}}</a>
             </li>
