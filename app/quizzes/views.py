@@ -128,8 +128,6 @@ class FindView(LoginRequiredMixin, View):
         context = {
             "filterform": filter.form,
             "page": current_page.object_list,
-            "prev_page": current_page.previous_page_number() if current_page.number > 1 else None,
-            "next_page": current_page.next_page_number() if current_page.number < paginator.num_pages else None,
             "total_pages": [i for i in range(1, total_pages + 1)],
             "current_page": current_page.number,
             "list_of_sizes": DEFAULT_SIZES_FILTER_PAGE,
