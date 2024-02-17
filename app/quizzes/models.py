@@ -16,17 +16,22 @@ class Test(models.Model):
     description = models.CharField(max_length=256, null=False)
     tag = models.ManyToManyField(Tag, blank=True)
     time_for_complete = models.DurationField(null=False)
+    attempts = models.IntegerField(null=False)
     author = models.ForeignKey("users.User", on_delete=models.RESTRICT)
     created = models.DateTimeField(auto_now_add=True)
+    is_hidden = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
 
 
-
 class Question(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     text = models.CharField(max_length=256)
+    order = models.PositiveIntegerField(default=0, blank=False, null=False, db_index=True)
+
+    class Meta:
+        ordering = ["order"]
 
     def __str__(self):
         return self.text
@@ -41,16 +46,15 @@ class Choice(models.Model):
         return self.choice_text
 
 
-class TestState(models.Model):
+class AttemptPipeline(models.Model):
+    time_start = models.DateTimeField(auto_now_add=True)
+    time_end = models.DateTimeField(null=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    is_attempt_completed = models.BooleanField(default=False)
+
+
+class AttemptState(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer = models.BooleanField()
-    # time_start = models.TimeField(null=False)
-    # можно ли не создавать таблицу TestPipeline ради этой строки и прописать здесь time_start, так будет меньше запросов но будет дублтроваться время во всех строках
-
-
-class TestPipeline(models.Model):
-    time_start = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    attempt = models.ForeignKey(AttemptPipeline, on_delete=models.CASCADE)

@@ -25,7 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = [f"{config.HOST}", "app"]
@@ -46,6 +45,7 @@ INSTALLED_APPS = [
     "minio_storage",
     "django_countries",
     "django_filters",
+    "adminsortable2",
 ]
 
 MIDDLEWARE = [
@@ -56,6 +56,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "quizzes.middleware.ErrorHandlerMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -127,10 +128,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "statics/"
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+STATIC_URL = "static/"
+
+DEBUG = False
+
+if DEBUG:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",
+    ]
+else:
+    STATIC_ROOT = BASE_DIR / "static"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -189,8 +197,6 @@ CELERY_BROKER_URL = config.CELERY_BROKER_URL
 CELERY_RESULT_BACKEND = config.CELERY_RESULT_BACKEND
 
 
-MINIO_STORAGE_MEDIA_URL = f"http://{config.HOST}:80/static/local-media/"
+MINIO_STORAGE_MEDIA_URL = f"http://{config.HOST}:80/media/local-media/"
 
 AUTH_USER_MODEL = "users.User"
-
-DEBUG=True

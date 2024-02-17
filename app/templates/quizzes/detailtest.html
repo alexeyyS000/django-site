@@ -62,10 +62,10 @@ detail {{test}}
                     <hr>
                     <div class="row">
                         <div class="col-sm-3">
-                            <p class="mb-0">Attempts left</p>
+                            <p class="mb-0">Attempts</p>
                         </div>
                         <div class="col-sm-9">
-                            <p class="text-muted mb-0">#</p>
+                            <p class="text-muted mb-0">{{attempts_used}}/{{attempts}}</p>
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,9 @@ detail {{test}}
 
         </div>
     </div>
+    {%if attempts_used is not attempts%}
     <a class="btn btn-primary" href="{% url 'quizzes:start_test' test.id 1 %}" role="button">start test</a> &nbsp;
-    <a class="btn btn-primary" href="#" role="button">previous attempts</a>
+    {%endif%}
+    <a class="btn btn-primary" href="{% url 'quizzes:attempts' test.id %}" role="button">previous attempts</a>
 </div>
 {% endblock %}

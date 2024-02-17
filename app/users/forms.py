@@ -81,6 +81,8 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserAvatarUploadForm(forms.ModelForm):
+    avatar = forms.ImageField(required=True)
+
     class Meta:
         model = User
         fields = ("avatar",)

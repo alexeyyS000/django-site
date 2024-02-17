@@ -10,13 +10,13 @@ from .utils.models import SizeRestrictedImageField
 
 
 class User(AbstractUser):
-    avatar = SizeRestrictedImageField(max_upload_size=MAX_IMAGE_SIZE_BYTES, null=True)
+    avatar = SizeRestrictedImageField(max_upload_size=MAX_IMAGE_SIZE_BYTES, null=True, blank=True)
     birthday = models.DateField(null=True)
     is_active_email = models.BooleanField(default=False)
     language = models.CharField(max_length=2, choices=LANGUAGE_CHOICE, default="EN")
     country = CountryField(null=True, blank=True)
     updated = models.DateTimeField(auto_now=True)
-    done_tests = models.ManyToManyField(to="quizzes.Test")
+    done_tests = models.ManyToManyField(to="quizzes.Test", blank=True)
 
 
 @receiver(models.signals.pre_save, sender=User)

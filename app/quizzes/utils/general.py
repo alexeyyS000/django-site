@@ -1,14 +1,10 @@
 import datetime
 
-from django.urls import reverse
-from django.utils.safestring import mark_safe
+from ..errors import BadFindParametrError
 
 
-def time_to_timedelta(time):
-    return datetime.timedelta(hours=time.hour, minutes=time.minute, seconds=time.second, microseconds=time.microsecond)
 
-
-def is_time_up(time_start, time_for_complete):
+def is_time_up(time_start:datetime.datetime, time_for_complete:datetime.timedelta):
     time_left = time_for_complete - (datetime.datetime.now().replace(tzinfo=None) - time_start.replace(tzinfo=None))
     if time_left < datetime.timedelta(minutes=0, seconds=0):
         raise TimeoutError
@@ -16,14 +12,13 @@ def is_time_up(time_start, time_for_complete):
         return time_left
 
 
-def chop_microseconds(delta):
+def chop_microseconds(delta:datetime.timedelta):
     return delta - datetime.timedelta(microseconds=delta.microseconds)
 
 
-class EditLinkToInlineObjectMixin(object):
-    def edit_link(self, instance):
-        url = reverse("admin:%s_%s_change" % (instance._meta.app_label, instance._meta.model_name), args=[instance.pk])
-        if instance.pk:
-            return mark_safe('<a href="{u}">edit</a>'.format(u=url))
-        else:
-            return ""
+def check_validity_request_ints(*args:str):
+    for i in args:
+        try:
+            int(i)
+        except ValueError:
+            raise BadFindParametrError

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}
+Attempts
+{% endblock %}
+{% block content %}
+
+<br>
+<br>
+
+
+<table class="table table-bordered table-striped" style="background-color:#fff;color:#333;">
+    <thead>
+        <tr>
+            <th >Number</th>
+            <th >Time start</th>
+            <th >Result</th>
+            <th>time took</th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+        {% for attempt in attempts%}
+        <tr class="clickable">
+            <td> <a href="{% url 'quizzes:detail_attempt' test_id attempt.attempt.id %}"
+                    class="list-group-item list-group-item-action py-2">
+                    <div class="d-flex w-100 align-items-center justify-content-between">
+                        <strong class="mb-1">{{ forloop.counter }}</strong>
+                    </div>
+                </a>
+            </td>
+            <td>{{attempt.attempt.time_start}}</td>
+            <td>{{attempt.right_answers}} of {{attempt.total_questions}}</td>
+            <td>{{attempt.time_took}}</td>
+        </tr>
+        {% endfor %}
+
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

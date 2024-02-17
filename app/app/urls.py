@@ -28,4 +28,4 @@ urlpatterns = [
 
 
 handler404 = "app.views.page_not_found_view"
-handler400 = "app.views.page_bad_request_view"
+handler500 = "app.views.server_error_view"

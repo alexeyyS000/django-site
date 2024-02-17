@@ -34,3 +34,8 @@ class SizeRestrictedImageField(ImageField):
             )
 
         return data
+
+
+def group_moderator_create(apps, schema_editor):
+    Group = apps.get_model("auth", "Group")
+    Group.objects.get_or_create(name="moderator")

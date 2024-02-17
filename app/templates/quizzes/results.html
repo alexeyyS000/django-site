@@ -3,7 +3,7 @@
 Result
 {% endblock %}
 {% block content %}
-<h1>{{ test }} is comlete</h1>
+<h1>{{ test }} is comlete</h1> {%if attempt_num%}{{attempt_num}}{%endif%}
 <br>
 <table class="table table-bordered" style="width: 70%; background-color:#fff;color:#333;">
     <thead>
