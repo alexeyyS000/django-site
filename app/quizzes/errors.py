@@ -1,8 +1,5 @@
 from django.utils.translation import gettext_lazy as _
-
-
-class BaseHttpError(Exception):
-    pass
+from .utils.exceptions import BaseHttpError
 
 
 class PageNotFoundError(BaseHttpError):

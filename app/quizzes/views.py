@@ -9,7 +9,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from django.views import generic
 
 from . import errors
 from .filter import TestFilter
@@ -24,15 +23,6 @@ from .utils.general import chop_microseconds
 from .utils.general import is_time_up
 from .utils.models import get_one_or_none
 
-
-class ListTestView(LoginRequiredMixin, generic.ListView):
-    template_name = "quizzes/tests.html"
-    context_object_name = "latest_tests_list"
-
-    def get_queryset(self):
-        """Return the last five published questions."""
-
-        return Test.objects.filter(is_hidden=False).order_by("-created")[:20]
 
 
 class ResultView(LoginRequiredMixin, View):

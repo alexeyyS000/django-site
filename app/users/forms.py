@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.widgets import CountrySelectWidget
 
 from .models import User
-from .utils.constants import LANGUAGE_CHOICE
+from .utils.constants import LANGUAGE_CHOICE, MINIMUM_DATE_OF_BIRTH
 from .utils.general import email_authenticate
 
 
@@ -66,7 +66,7 @@ class UserCreationForm(forms.ModelForm):
 
     def clean_birthday(self):
         birthday = self.cleaned_data.get("birthday")
-        if birthday > date.today():
+        if birthday > date.today() or birthday < MINIMUM_DATE_OF_BIRTH:
             msg = "Incorrect date"
             self.add_error("birthday", msg)
 

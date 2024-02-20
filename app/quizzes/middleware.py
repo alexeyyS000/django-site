@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
 
-from .errors import BaseHttpError
+from .utils.exceptions import BaseHttpError
 
 
 class ErrorHandlerMiddleware:
