@@ -265,6 +265,25 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-admin-search"
+version = "0.3.15"
+description = "The \"Django Admin Search\" is a advanced search modal for django admin"
+category = "main"
+optional = false
+python-versions = ">=3.3"
+files = [
+    {file = "django-admin-search-0.3.15.tar.gz", hash = "sha256:75e457895a654d29db34379bde2228ce1b12b1e58150c13025a9d19ee22a4f2a"},
+    {file = "django_admin_search-0.3.15-py3-none-any.whl", hash = "sha256:e9edd1b2a199aea245a6bbe495744dba0831269b4ce687441f7140e38476fc84"},
+]
+
+[package.dependencies]
+django = "*"
+
+[package.extras]
+code-quality = ["bandit", "isort", "xenon"]
+dev = ["django", "django-mock-queries", "pylint", "pytest", "pytest-cov", "pytest-pylint", "pytest-watch", "six", "tox"]
+
+[[package]]
 name = "django-admin-sortable2"
 version = "2.1.10"
 description = "Generic drag-and-drop sorting for the List, the Stacked- and the Tabular-Inlines Views in the Django Admin"
@@ -880,4 +899,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ca70d7e1a473796cd65353a90059e8ee130b94456ecd1e03dafbc3fdb06e3610"
+content-hash = "ee5a0219c9cb7df38b61631d0f7eb79ae847af5e8f5983fc68a7b36a3a5e3da4"

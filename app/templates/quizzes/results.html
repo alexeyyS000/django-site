@@ -9,7 +9,7 @@ Result
     <thead>
         <tr>
             <th>question</th>
-            <th style="width: 4%;"></th>
+            <th style="width: 11%;">Is right?</th>
         </tr>
     </thead>
     <tbody id="myTable">
@@ -17,12 +17,12 @@ Result
         {% if obj.answer %}
         <tr style="background-color: rgba(0, 128, 0, 0.23);">
             <td>{{obj.question}}</td>
-            <td>✅</td>
+            <td style="text-align: center;">✅</td>
         </tr>
         {%else%}
         <tr style="background-color:rgba(255, 0, 0, 0.29);">
             <td>{{obj.question}}</td>
-            <td>❌</td>
+            <td style="text-align: center;">❌</td>
         </tr>
         {%endif%}
         {% endfor %}

@@ -4,7 +4,6 @@ from .models import AttemptPipeline
 from .models import AttemptState
 from .models import Choice
 
-
 class AnswerQuestionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         try:
@@ -30,3 +29,23 @@ class AnswerQuestionForm(forms.Form):
             AttemptState.objects.get_or_create(
                 attempt=current_attempt, question=self.question, defaults={"answer": False}
             )
+
+
+
+class TestFormSearch(forms.Form):
+    name = forms.CharField(required=False, widget=forms.TextInput(attrs={'filter_method': '__contains',}))
+    tag = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={
+            'filter_field': 'tag__name', 
+            'filter_method': '__in'
+        }
+    ))
+
+
+class AttemptFormSearch(forms.Form):
+    test = forms.CharField(required=False, widget=forms.TextInput(attrs={'filter_field': 'test__name', 'filter_method': '__contains',}))
+    username = forms.CharField(required=False, widget=forms.TextInput(
+        attrs={
+            'filter_field': 'user__username', 
+        }
+    ))

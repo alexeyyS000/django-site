@@ -17,17 +17,20 @@ def force_create_permissions(apps, schema_editor):
 def grant_permissions(apps, schema_editor):
     Group = apps.get_model("auth", "Group")
     moderator_group, exisit = Group.objects.get_or_create(name="moderator")
-    Test = apps.get_model("quizzes", "Test")
-    content_type = ContentType.objects.get_for_model(Test)
-    test_permission = Permission.objects.filter(content_type=content_type).values_list("id", flat=True)
-    moderator_group.permissions.add(*test_permission)
+    PERMISSIONS_LIST = [("quizzes", "Test"), ("quizzes", "Tag"),("quizzes", "Question"), ("quizzes", "Choice"),("quizzes", "AttemptPipeline")]
+    for i in PERMISSIONS_LIST:
+        model = apps.get_model(i[0], i[1])
+        content_type = ContentType.objects.get_for_model(model)
+        test_permission = Permission.objects.filter(content_type=content_type).values_list("id", flat=True)
+        moderator_group.permissions.add(*test_permission)
 
 
 
 def revoke_permissions(apps, schema_editor):
-    """your code here"""
-
-
+    Group = apps.get_model("auth", "Group")
+    moderator_group = Group.objects.get(name="moderator")
+    moderator_group.clean()
+    moderator_group.delete()
 
 class Migration(migrations.Migration):
     dependencies = [

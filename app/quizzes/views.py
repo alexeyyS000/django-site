@@ -17,7 +17,7 @@ from .models import AttemptPipeline
 from .models import AttemptState
 from .models import Question
 from .models import Test
-from .utils.constants import DEFAULT_SIZES_FILTER_PAGE
+from .utils.constants import DEFAULT_SIZES_FILTER_PAGE, DEFAULT_SIZES_ATTEMPTS_PAGE
 from .utils.general import check_validity_request_ints
 from .utils.general import chop_microseconds
 from .utils.general import is_time_up
@@ -109,7 +109,7 @@ class FindView(LoginRequiredMixin, View):
         page_size = int(page_size)
         page_number = int(page_number)
         if page_size not in DEFAULT_SIZES_FILTER_PAGE:
-            raise errors.BadFindParametrError
+            raise errors.BadRequestParametrError
         paginator = Paginator(filter.qs, page_size)
         try:
             current_page = paginator.page(page_number)
@@ -145,8 +145,17 @@ class AttemptsView(LoginRequiredMixin, View):
 
     def get(self, request: HttpRequest, quiz_id: str) -> HttpResponse:
         check_validity_request_ints(quiz_id)
-        attempts = AttemptPipeline.objects.filter(test_id=quiz_id, user=request.user).order_by("-time_start")
+        attempts = AttemptPipeline.objects.filter(test_id=quiz_id, user=request.user).order_by("time_start")
         results = []
+
+        page_size = request.GET.get("page_size", DEFAULT_SIZES_ATTEMPTS_PAGE[1])
+        page_number = request.GET.get("page_number", 1)
+        check_validity_request_ints(page_number, page_size)
+        page_size = int(page_size)
+        page_number = int(page_number)
+        if page_size not in DEFAULT_SIZES_ATTEMPTS_PAGE:
+            raise errors.BadRequestParametrError
+        
         for attempt in attempts:
             state = AttemptState.objects.filter(attempt=attempt)
             total_questions = len(state)
@@ -160,7 +169,13 @@ class AttemptsView(LoginRequiredMixin, View):
                     "time_took": time_took,
                 }
             )
-        context = {"attempts": results, "test_id": quiz_id}
+        paginator = Paginator(results, page_size)
+        try:
+            current_page = paginator.page(page_number)
+        except EmptyPage:
+            raise errors.PageNotFoundError
+        total_pages = paginator.num_pages
+        context = {"attempts": current_page, "test_id": quiz_id, 'total_pages':[i for i in range(1, total_pages + 1)], "list_of_sizes": DEFAULT_SIZES_ATTEMPTS_PAGE, "current_page": current_page.number}
         return render(request, self.template_name, context)
 
 

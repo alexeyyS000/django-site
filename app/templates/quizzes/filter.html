@@ -60,7 +60,7 @@ Filter
 
                             {%else%}
                             {%for size in list_of_sizes%}
-                            {% if 12 is size %}
+                            {% if list_of_sizes.1 is size %}
                             <option value={{size}} selected="selected">{{size}}</option>
                             {%else%}
                             <option value={{size}}>{{size}}</option>

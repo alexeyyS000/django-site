@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django_countries",
     "django_filters",
     "adminsortable2",
+    'django_admin_search',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +57,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "quizzes.middleware.ErrorHandlerMiddleware",
+    "app.middleware.ErrorHandlerMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"

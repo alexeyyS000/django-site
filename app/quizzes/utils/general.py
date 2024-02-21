@@ -1,6 +1,6 @@
 import datetime
 
-from ..errors import BadFindParametrError
+from ..errors import BadRequestParametrError
 
 
 
@@ -21,4 +21,4 @@ def check_validity_request_ints(*args:str):
         try:
             int(i)
         except ValueError:
-            raise BadFindParametrError
+            raise BadRequestParametrError

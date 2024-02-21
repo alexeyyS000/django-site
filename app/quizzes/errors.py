@@ -1,5 +1,5 @@
 from django.utils.translation import gettext_lazy as _
-from .utils.exceptions import BaseHttpError
+from app.utils.errors import BaseHttpError
 
 
 class PageNotFoundError(BaseHttpError):
@@ -14,7 +14,7 @@ class TestNotFoundError(BaseHttpError):
     message = "The test you’re looking for doesn’t exist."
 
 
-class BadFindParametrError(BaseHttpError):
+class BadRequestParametrError(BaseHttpError):
     status = 400
-    error_name = "Bad find request."
-    message = "You are sending an invalid find parameter."
+    error_name = "Bad request."
+    message = "You are sending an invalid parameter."

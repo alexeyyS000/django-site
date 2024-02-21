@@ -6,8 +6,41 @@ Attempts
 
 <br>
 <br>
+<form method="get">
+    <div class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="size" class="col-form-label">page size:&ensp;&emsp;&emsp;</label>
+        </div>
+        <div class="col-auto">
+            <select class="form-select form-select-sm" name="page_size" id="id_language">
+                {% if request.GET.page_size %}
+                {%for size in list_of_sizes%}
+                {% if request.GET.page_size == size|stringformat:"i" %}
+                <option value={{size}} selected="selected">{{size}}</option>
+                {%else%}
+                <option value={{size}}>{{size}}</option>
+                {% endif %}
+                {%endfor%}
 
+                {%else%}
+                {%for size in list_of_sizes%}
+                {% if list_of_sizes.1 is size %}
+                <option value={{size}} selected="selected">{{size}}</option>
+                {%else%}
+                <option value={{size}}>{{size}}</option>
+                {% endif %}
+                {%endfor%}
+                {% endif %}
+            </select>
+        </div>
+    </div>
+    <div class="mt-3 d-flex justify-content-between">
 
+        <button class="btn btn-primary" type="submit">Submit</button>
+
+    </div>
+</form>
+<br>
 <table class="table table-bordered table-striped" style="background-color:#fff;color:#333;">
     <thead>
         <tr>
@@ -36,4 +69,28 @@ Attempts
         </tr>
     </tbody>
 </table>
+
+
+
+<nav>
+    <ul class="pagination justify-content-center">
+        {%for i in total_pages%}
+        {% if i is not current_page%}
+        <li class="page-item"><a class="page-link"
+                href="?page_size={{ request.GET.page_size }}&page_number={{i}}">{{i}}</a>
+        </li>
+        {%else%}
+        <li class="page-item active">
+            <span class="page-link">
+                {{i}}
+                <span class="sr-only"></span>
+            </span>
+        </li>
+        {% endif %}
+
+        {% endfor %}
+
+    </ul>
+</nav>
+
 {% endblock %}
