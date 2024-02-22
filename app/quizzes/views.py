@@ -17,22 +17,28 @@ from .models import AttemptPipeline
 from .models import AttemptState
 from .models import Question
 from .models import Test
-from .utils.constants import DEFAULT_SIZES_FILTER_PAGE, DEFAULT_SIZES_ATTEMPTS_PAGE
+from .utils.constants import DEFAULT_SIZES_ATTEMPTS_PAGE
+from .utils.constants import DEFAULT_SIZES_FILTER_PAGE
 from .utils.general import check_validity_request_ints
 from .utils.general import chop_microseconds
 from .utils.general import is_time_up
 from .utils.models import get_one_or_none
 
 
-
 class ResultView(LoginRequiredMixin, View):
     template_name = "quizzes/results.html"
 
     def get(self, request: HttpRequest, quiz_id: str) -> HttpResponse:
+        check_validity_request_ints(quiz_id)
         user = request.user
         test = Test.objects.get(id=quiz_id)
         questions = Question.objects.filter(test_id=quiz_id).order_by("order")
-        current_attempt = AttemptPipeline.objects.get(user=request.user, test_id=quiz_id, is_attempt_completed=False)
+        try:
+            current_attempt = AttemptPipeline.objects.get(
+                user=request.user, test_id=quiz_id, is_attempt_completed=False
+            )
+        except AttemptPipeline.DoesNotExist:
+            raise errors.AttemptNotFoundError
         for question in questions:
             AttemptState.objects.get_or_create(attempt=current_attempt, question=question, defaults={"answer": False})
         current_attempt.is_attempt_completed = True
@@ -50,11 +56,17 @@ class DetailQuestionView(LoginRequiredMixin, View):
     template_name = "quizzes/detailquestion.html"
 
     def get(self, request: HttpRequest, quiz_id: str, question_number: str) -> HttpResponse:
-        test = Test.objects.get(id=quiz_id)
+        check_validity_request_ints(quiz_id, question_number)
+        try:
+            test = Test.objects.get(id=quiz_id)
+        except Test.DoesNotExist:
+            raise errors.TestNotFoundError
         if test in request.user.done_tests.all():
             return HttpResponseRedirect(reverse("quizzes:attempts", kwargs={"quiz_id": quiz_id}))
-
-        questions = Question.objects.filter(test_id=quiz_id).order_by("order")
+        try:
+            questions = Question.objects.filter(test_id=quiz_id).order_by("order")
+        except Question.DoesNotExist:
+            raise errors.QuestionNotFoundError
         current_question = questions[int(question_number) - 1]
         pipline = AttemptPipeline.objects.get_or_create(user=request.user, test_id=quiz_id, is_attempt_completed=False)
         try:
@@ -68,11 +80,11 @@ class DetailQuestionView(LoginRequiredMixin, View):
             "answered_questions": [i.question_id for i in answered_questions],
             "test": test,
             "all_question_list": questions,
-            "next_question": int(question_number) + 1 if int(question_number) + 1 <= len(questions) else None,
         }
         return render(request, self.template_name, context)
 
     def post(self, request: HttpRequest, quiz_id: str, question_number: str) -> HttpResponse:
+        check_validity_request_ints(quiz_id, question_number)
         test = Test.objects.get(id=quiz_id)
         questions = Question.objects.filter(test=test).order_by("order")
         current_question = questions[int(question_number) - 1]
@@ -93,7 +105,6 @@ class DetailQuestionView(LoginRequiredMixin, View):
             "answered_questions": [i.question_id for i in answered_questions],
             "test": test,
             "all_question_list": questions,
-            "next_question": int(question_number) + 1 if int(question_number) + 1 <= len(questions) else None,
         }
         return render(request, self.template_name, context)
 
@@ -102,10 +113,10 @@ class FindView(LoginRequiredMixin, View):
     template_name = "quizzes/filter.html"
 
     def get(self, request: HttpRequest) -> HttpResponse:
-        filter = TestFilter(request.GET, queryset=Test.objects.filter(is_hidden=False))
         page_size = request.GET.get("page_size", DEFAULT_SIZES_FILTER_PAGE[1])
         page_number = request.GET.get("page_number", 1)
         check_validity_request_ints(page_number, page_size)
+        filter = TestFilter(request.GET, queryset=Test.objects.filter(is_hidden=False))
         page_size = int(page_size)
         page_number = int(page_number)
         if page_size not in DEFAULT_SIZES_FILTER_PAGE:
@@ -144,18 +155,15 @@ class AttemptsView(LoginRequiredMixin, View):
     template_name = "quizzes/attempts.html"
 
     def get(self, request: HttpRequest, quiz_id: str) -> HttpResponse:
-        check_validity_request_ints(quiz_id)
-        attempts = AttemptPipeline.objects.filter(test_id=quiz_id, user=request.user).order_by("time_start")
-        results = []
-
         page_size = request.GET.get("page_size", DEFAULT_SIZES_ATTEMPTS_PAGE[1])
         page_number = request.GET.get("page_number", 1)
-        check_validity_request_ints(page_number, page_size)
+        check_validity_request_ints(quiz_id, page_number, page_size)
         page_size = int(page_size)
         page_number = int(page_number)
         if page_size not in DEFAULT_SIZES_ATTEMPTS_PAGE:
             raise errors.BadRequestParametrError
-        
+        attempts = AttemptPipeline.objects.filter(test_id=quiz_id, user=request.user).order_by("time_start")
+        results = []
         for attempt in attempts:
             state = AttemptState.objects.filter(attempt=attempt)
             total_questions = len(state)
@@ -175,7 +183,13 @@ class AttemptsView(LoginRequiredMixin, View):
         except EmptyPage:
             raise errors.PageNotFoundError
         total_pages = paginator.num_pages
-        context = {"attempts": current_page, "test_id": quiz_id, 'total_pages':[i for i in range(1, total_pages + 1)], "list_of_sizes": DEFAULT_SIZES_ATTEMPTS_PAGE, "current_page": current_page.number}
+        context = {
+            "attempts": current_page,
+            "test_id": quiz_id,
+            "total_pages": [i for i in range(1, total_pages + 1)],
+            "list_of_sizes": DEFAULT_SIZES_ATTEMPTS_PAGE,
+            "current_page": current_page.number,
+        }
         return render(request, self.template_name, context)
 
 

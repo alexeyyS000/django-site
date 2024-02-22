@@ -9,7 +9,7 @@ class TestFilter(django_filters.FilterSet):
 
     tag = django_filters.CharFilter(method="filter_search", label="find by tags(values separated by space)")
 
-    def filter_search(self, queryset:QuerySet, name:str, value:str):
+    def filter_search(self, queryset: QuerySet, name: str, value: str):
         return queryset.filter(tag__name__in=value.split(" "))
 
     ordering = django_filters.OrderingFilter(

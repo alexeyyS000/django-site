@@ -7,7 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from django_countries.widgets import CountrySelectWidget
 
 from .models import User
-from .utils.constants import LANGUAGE_CHOICE, MINIMUM_DATE_OF_BIRTH
+from .utils.constants import LANGUAGE_CHOICE
+from .utils.constants import MINIMUM_DATE_OF_BIRTH
 from .utils.general import email_authenticate
 
 

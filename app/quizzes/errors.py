@@ -1,4 +1,5 @@
 from django.utils.translation import gettext_lazy as _
+
 from app.utils.errors import BaseHttpError
 
 
@@ -12,6 +13,18 @@ class TestNotFoundError(BaseHttpError):
     status = 404
     error_name = "Test not found."
     message = "The test you’re looking for doesn’t exist."
+
+
+class AttemptNotFoundError(BaseHttpError):
+    status = 404
+    error_name = "Attempt not found."
+    message = "The attempt you’re looking for doesn’t exist."
+
+
+class QuestionNotFoundError(BaseHttpError):
+    status = 404
+    error_name = "Question not found."
+    message = "The Question you’re looking for doesn’t exist."
 
 
 class BadRequestParametrError(BaseHttpError):

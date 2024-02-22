@@ -2,6 +2,9 @@ from adminsortable2.admin import SortableAdminBase
 from adminsortable2.admin import SortableStackedInline
 from django.contrib import admin
 from django_admin_search.admin import AdvancedSearchAdmin
+
+from .forms import AttemptFormSearch
+from .forms import TestFormSearch
 from .models import AttemptPipeline
 from .models import AttemptState
 from .models import Choice
@@ -9,7 +12,7 @@ from .models import Question
 from .models import Tag
 from .models import Test
 from .utils.admin import EditLinkToInlineObjectMixin
-from .forms import AttemptFormSearch, TestFormSearch
+
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -34,6 +37,7 @@ class TestAdmin(AdvancedSearchAdmin, SortableAdminBase, admin.ModelAdmin):
     fields = ["name", "description", "tag", "time_for_complete", "attempts", "is_hidden"]
     inlines = [QuestionInline]
     search_form = TestFormSearch
+
     def save_model(self, request, obj, form, change):
         obj.author = request.user
         super().save_model(request, obj, form, change)
@@ -48,6 +52,7 @@ class AttemptAdmin(AdvancedSearchAdmin, admin.ModelAdmin):
     list_display = ["time_start", "time_end", "user", "test", "is_attempt_completed"]
     inlines = [StateInline]
     search_form = AttemptFormSearch
+
     def has_add_permission(self, request):
         return False
 

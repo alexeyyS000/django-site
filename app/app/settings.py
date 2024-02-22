@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "django_countries",
     "django_filters",
     "adminsortable2",
-    'django_admin_search',
+    "django_admin_search",
 ]
 
 MIDDLEWARE = [
@@ -135,8 +135,8 @@ DEBUG = True
 
 
 STATICFILES_DIRS = [
-        BASE_DIR / "static",
-    ]
+    BASE_DIR / "static",
+]
 
 STATIC_ROOT = BASE_DIR / "statics"
 
