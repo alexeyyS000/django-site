@@ -67,7 +67,7 @@ class RegisterUserView(View):
 
 
 class ProfileView(LoginRequiredMixin, View):
-    template_name = "profile.html"
+    template_name = "users/profile.html"
 
     def get(self, request: HttpRequest) -> HttpResponse:
         context = {"form": AuthenticationForm}
@@ -75,7 +75,7 @@ class ProfileView(LoginRequiredMixin, View):
 
 
 class ImageUploadView(LoginRequiredMixin, View):
-    template_name = "imgload.html"
+    template_name = "users/imgload.html"
 
     def post(self, request: HttpRequest) -> HttpResponse:
         form = UserAvatarUploadForm(request.POST, request.FILES, instance=request.user)
