@@ -62,7 +62,7 @@ Attempts
             </td>
             <td>{{attempt.attempt.time_start}}</td>
             <td>{{attempt.right_answers}} of {{attempt.total_questions}}</td>
-            <td>{{attempt.time_took}}</td>
+            <td> {% if attempt.time_took %}{{attempt.time_took}}{%else%}Current attempt <br>(<a href="{% url 'quizzes:start_test' test_id 1 %}">link</a> to complete){%endif%}</td>
         </tr>
         {% endfor %}
 

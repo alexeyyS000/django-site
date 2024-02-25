@@ -168,7 +168,13 @@ class AttemptsView(LoginRequiredMixin, View):
             state = AttemptState.objects.filter(attempt=attempt)
             total_questions = len(state)
             right_answers = len([i for i in state if i.answer])
-            time_took = chop_microseconds(attempt.time_end - attempt.time_start)
+            if attempt.time_end:
+                time_took = chop_microseconds(attempt.time_end - attempt.time_start)
+                valid_time = Test.objects.get(id=quiz_id).time_for_complete
+                if time_took > valid_time:
+                    time_took = valid_time
+            else:
+                time_took = None
             results.append(
                 {
                     "attempt": attempt,
