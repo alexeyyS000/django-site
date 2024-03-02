@@ -7,10 +7,10 @@ Question
 
 <div class="container">
 
-  <div class="row">
+  <div class="row g-5">
 
-    <div class="col-sm-4" style="width: 70%;">
-
+    <div class="col-sm-8">
+      <br>
       <div class="card-body">
 
 
@@ -26,7 +26,7 @@ Question
           </div>
           <div>
             <span class="text-danger"><i class="fe fe-clock me-1 align-middle"></i>
-              <p id="Timer"></p>
+              <time id="timer"></time>
             </span>
           </div>
         </div>
@@ -71,21 +71,17 @@ Question
       </div>
     </div>
 
-    <div class="col-sm-4" style="width: 15%;">
 
-    </div>
-    <div class="col-sm-4" style="width: 15%;">
+    <div class="col-sm-4">
       <br>
       <ul class="list-group">
         {% for question in all_question_list %}
         {%if form.question.id is question.id%}
-        <a class="link-dark text-decoration-none" href="{% url 'quizzes:start_test' test.id forloop.counter %}">
-          <li class="list-group-item active" aria-current="true">Question № {{forloop.counter}}</li>
-        </a>
+        <li class="list-group-item active" aria-current="true"><a class="link-dark text-decoration-none"
+            href="{% url 'quizzes:start_test' test.id forloop.counter %}">Question № {{forloop.counter}}</a></li>
         {%else%}
-        <a class="link-dark text-decoration-none" href="{% url 'quizzes:start_test' test.id forloop.counter %}">
-          <li class="list-group-item">Question № {{forloop.counter}}</li>
-        </a>
+        <li class="list-group-item"><a class="link-dark text-decoration-none"
+            href="{% url 'quizzes:start_test' test.id forloop.counter %}">Question № {{forloop.counter}}</a></li>
         {%endif%}
         {% endfor %}
       </ul>
@@ -109,32 +105,35 @@ Question
 
 
 <script>
-  function timeEnd() {
-    location.replace("{% url 'quizzes:result' test.id %}")
+  const TIMER_INTERVAL_MS = 1000;
+  const FINISH_URL = "{% url 'quizzes:result' test.id %}";
+  const countDown = document.getElementById('timer');
+  const finishbutton = document.getElementById('finishbutton');
+  let timeSeconds = '{{time_up}}';
+
+  function redirectToResultPage() {
+    location.replace(FINISH_URL)
   }
 
-  function UpdateTimer() {
-    const minutes = Math.floor(time / 60);
-    let seconds = time % 60;
+  function updateTimer() {
+    const minutes = Math.floor(timeSeconds / 60);
+    let seconds = timeSeconds % 60;
     seconds = seconds < 10 ? "0" + seconds : seconds;
-    countDown.innerHTML = `${minutes}:${seconds}`;
-    if (time <= 0) { timeEnd(); }
-    time--;
+    countDown.textContent = `${minutes}:${seconds}`;
+    if (timeSeconds <= 0) { redirectToResultPage(); }
+    timeSeconds--;
   }
 
 
-  let time = Number('{{time_up}}');
 
 
-
-  const countDown = document.getElementById('Timer');
-  setInterval(UpdateTimer, 1000)
+  setInterval(updateTimer, TIMER_INTERVAL_MS)
 
 
 
   finishbutton.addEventListener('click', function () {
     if (confirm("you didn't finish the test")) {
-      location.href = "{% url 'quizzes:result' test.id %}";
+      redirectToResultPage();
     }
   })
 </script>

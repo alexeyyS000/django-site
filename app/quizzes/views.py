@@ -17,22 +17,21 @@ from .models import AttemptPipeline
 from .models import AttemptState
 from .models import Question
 from .models import Test
+from .utils.constants import DEFAULT_ORDERING_ATTEMPTS_PAGE
 from .utils.constants import DEFAULT_SIZES_ATTEMPTS_PAGE
 from .utils.constants import DEFAULT_SIZES_FILTER_PAGE
 from .utils.general import check_validity_request_ints
 from .utils.general import chop_microseconds
 from .utils.general import is_time_up
-from .utils.models import get_one_or_none
 
 
 class ResultView(LoginRequiredMixin, View):
     template_name = "quizzes/results.html"
 
-    def get(self, request: HttpRequest, quiz_id: str) -> HttpResponse:
-        check_validity_request_ints(quiz_id)
+    def get(self, request: HttpRequest, quiz_id: int) -> HttpResponse:
         user = request.user
         test = Test.objects.get(id=quiz_id)
-        questions = Question.objects.filter(test_id=quiz_id).order_by("order")
+        questions = Question.objects.prefetch_related("test").filter(test=test).order_by("order")
         try:
             current_attempt = AttemptPipeline.objects.get(
                 user=request.user, test_id=quiz_id, is_attempt_completed=False
@@ -42,7 +41,7 @@ class ResultView(LoginRequiredMixin, View):
         for question in questions:
             AttemptState.objects.get_or_create(attempt=current_attempt, question=question, defaults={"answer": False})
         current_attempt.is_attempt_completed = True
-        current_attempt.time_end = datetime.datetime.now()
+        current_attempt.time_end = datetime.datetime.utcnow()
         current_attempt.save()
         state = AttemptState.objects.filter(attempt=current_attempt).order_by("question__order")
         if AttemptPipeline.objects.filter(user=user, test_id=quiz_id).count() == test.attempts:
@@ -55,8 +54,7 @@ class ResultView(LoginRequiredMixin, View):
 class DetailQuestionView(LoginRequiredMixin, View):
     template_name = "quizzes/detailquestion.html"
 
-    def get(self, request: HttpRequest, quiz_id: str, question_number: str) -> HttpResponse:
-        check_validity_request_ints(quiz_id, question_number)
+    def get(self, request: HttpRequest, quiz_id: int, question_number: int) -> HttpResponse:
         try:
             test = Test.objects.get(id=quiz_id)
         except Test.DoesNotExist:
@@ -67,41 +65,42 @@ class DetailQuestionView(LoginRequiredMixin, View):
             questions = Question.objects.filter(test_id=quiz_id).order_by("order")
         except Question.DoesNotExist:
             raise errors.QuestionNotFoundError
-        current_question = questions[int(question_number) - 1]
-        pipline = AttemptPipeline.objects.get_or_create(user=request.user, test_id=quiz_id, is_attempt_completed=False)
-        try:
-            time_up = is_time_up(pipline[0].time_start, test.time_for_complete)
-        except TimeoutError:
+        current_question = questions[question_number - 1]
+        pipline, created = AttemptPipeline.objects.get_or_create(
+            user=request.user, test_id=quiz_id, is_attempt_completed=False
+        )
+        time_up = is_time_up(pipline.time_start, test.time_for_complete)
+        if time_up <= datetime.timedelta(minutes=0, seconds=0):
             return HttpResponseRedirect(reverse("quizzes:result", kwargs={"quiz_id": quiz_id}))
-        answered_questions = AttemptState.objects.filter(attempt=pipline[0])
+        answered_questions = AttemptState.objects.filter(attempt=pipline)
         context = {
             "form": AnswerQuestionForm(question=current_question),
-            "time_up": chop_microseconds(time_up).total_seconds(),
+            "time_up": time_up.seconds,
             "answered_questions": [i.question_id for i in answered_questions],
             "test": test,
             "all_question_list": questions,
         }
         return render(request, self.template_name, context)
 
-    def post(self, request: HttpRequest, quiz_id: str, question_number: str) -> HttpResponse:
-        check_validity_request_ints(quiz_id, question_number)
+    def post(self, request: HttpRequest, quiz_id: int, question_number: int) -> HttpResponse:
         test = Test.objects.get(id=quiz_id)
         questions = Question.objects.filter(test=test).order_by("order")
-        current_question = questions[int(question_number) - 1]
-        pipline = AttemptPipeline.objects.get_or_create(user=request.user, test=test, is_attempt_completed=False)
-        try:
-            time_up = is_time_up(pipline[0].time_start, test.time_for_complete)
-        except TimeoutError:
-            return HttpResponseRedirect(reverse("quizzes:result", kwargs={"quiz_id": quiz_id}))
+        current_question = questions[question_number - 1]
+        pipline, created = AttemptPipeline.objects.get_or_create(
+            user=request.user, test=test, is_attempt_completed=False
+        )
 
+        time_up = is_time_up(pipline.time_start, test.time_for_complete)
+        if time_up <= datetime.timedelta(minutes=0, seconds=0):
+            return HttpResponseRedirect(reverse("quizzes:result", kwargs={"quiz_id": quiz_id}))
         form = AnswerQuestionForm(request.POST, question=current_question)
-        answered_questions = AttemptState.objects.filter(attempt=pipline[0])
+        answered_questions = AttemptState.objects.filter(attempt=pipline)
         if form.is_valid():
             form.save(request.user, test)
 
         context = {
             "form": form,
-            "time_up": chop_microseconds(time_up).total_seconds(),
+            "time_up": time_up.seconds,
             "answered_questions": [i.question_id for i in answered_questions],
             "test": test,
             "all_question_list": questions,
@@ -130,7 +129,7 @@ class FindView(LoginRequiredMixin, View):
         context = {
             "filterform": filter.form,
             "page": current_page.object_list,
-            "total_pages": [i for i in range(1, total_pages + 1)],
+            "total_pages": range(1, total_pages + 1),
             "current_page": current_page.number,
             "list_of_sizes": DEFAULT_SIZES_FILTER_PAGE,
         }
@@ -140,9 +139,8 @@ class FindView(LoginRequiredMixin, View):
 class DetailTestView(LoginRequiredMixin, View):
     template_name = "quizzes/detailtest.html"
 
-    def get(self, request: HttpRequest, quiz_id: str) -> HttpResponse:
-        check_validity_request_ints(quiz_id)
-        test = get_one_or_none(Test, id=quiz_id, is_hidden=False)
+    def get(self, request: HttpRequest, quiz_id: int) -> HttpResponse:
+        test = Test.objects.filter(id=quiz_id, is_hidden=False).first()
         if not test:
             raise errors.TestNotFoundError
         attempts = test.attempts
@@ -154,15 +152,18 @@ class DetailTestView(LoginRequiredMixin, View):
 class AttemptsView(LoginRequiredMixin, View):
     template_name = "quizzes/attempts.html"
 
-    def get(self, request: HttpRequest, quiz_id: str) -> HttpResponse:
+    def get(self, request: HttpRequest, quiz_id: int) -> HttpResponse:
         page_size = request.GET.get("page_size", DEFAULT_SIZES_ATTEMPTS_PAGE[1])
         page_number = request.GET.get("page_number", 1)
-        check_validity_request_ints(quiz_id, page_number, page_size)
+        ordering = request.GET.get("ordering", DEFAULT_ORDERING_ATTEMPTS_PAGE[0])
+        if ordering not in DEFAULT_ORDERING_ATTEMPTS_PAGE:
+            raise errors.BadRequestParametrError
+        check_validity_request_ints(page_number, page_size)
         page_size = int(page_size)
         page_number = int(page_number)
         if page_size not in DEFAULT_SIZES_ATTEMPTS_PAGE:
             raise errors.BadRequestParametrError
-        attempts = AttemptPipeline.objects.filter(test_id=quiz_id, user=request.user).order_by("time_start")
+        attempts = AttemptPipeline.objects.filter(test_id=quiz_id, user=request.user).order_by(ordering)
         results = []
         for attempt in attempts:
             state = AttemptState.objects.filter(attempt=attempt)
@@ -192,9 +193,10 @@ class AttemptsView(LoginRequiredMixin, View):
         context = {
             "attempts": current_page,
             "test_id": quiz_id,
-            "total_pages": [i for i in range(1, total_pages + 1)],
+            "total_pages": range(1, total_pages + 1),
             "list_of_sizes": DEFAULT_SIZES_ATTEMPTS_PAGE,
             "current_page": current_page.number,
+            "possible_ordering": DEFAULT_ORDERING_ATTEMPTS_PAGE,
         }
         return render(request, self.template_name, context)
 
@@ -202,8 +204,7 @@ class AttemptsView(LoginRequiredMixin, View):
 class DetailAttemptView(LoginRequiredMixin, View):
     template_name = "quizzes/results.html"
 
-    def get(self, request: HttpRequest, quiz_id: str, attempt_id: str) -> HttpResponse:
-        check_validity_request_ints(quiz_id, attempt_id)
+    def get(self, request: HttpRequest, quiz_id: int, attempt_id: int) -> HttpResponse:
         state = AttemptState.objects.filter(attempt_id=attempt_id).order_by("question__order")
         test = Test.objects.get(id=quiz_id)
         context = {"test": test, "results": state}

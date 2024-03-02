@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -22,4 +24,4 @@ class ErrorHandlerMiddleware:
                     "errors/base.html",
                     {"status": exception.status, "message": exception.message, "error_name": exception.error_name},
                 )
-            return HttpResponse("Error processing the request.", status=500)
+            return HttpResponse("Error processing the request.", status=HTTPStatus.INTERNAL_SERVER_ERROR)

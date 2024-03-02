@@ -1,6 +1,7 @@
 import django_filters
 from django.db.models import QuerySet
 
+from .models import AttemptPipeline
 from .models import Test
 
 

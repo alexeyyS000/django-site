@@ -33,12 +33,39 @@ Attempts
                 {% endif %}
             </select>
         </div>
-    </div>
-    <div class="mt-3 d-flex justify-content-between">
+        <div class="clear"> </div>
+        <div class="col-auto">
+            <label for="ordering" class="col-form-label">Ordering:&ensp;&emsp;&emsp;</label>
+        </div>
+        <div class="col-auto">
+            <select class="form-select form-select-sm" name="ordering" id="ordering">
+                {% if request.GET.ordering %}
+                {%for order in possible_ordering%}
+                {% if request.GET.ordering == order %}
+                <option value={{order}} selected="selected">{{order}}</option>
+                {%else%}
+                <option value={{order}}>{{order}}</option>
+                {% endif %}
+                {%endfor%}
 
-        <button class="btn btn-primary" type="submit">Submit</button>
+                {%else%}
+                {%for order in possible_ordering%}
+                {% if possible_ordering.0 is order %}
+                <option value={{order}} selected="selected">{{order}}</option>
+                {%else%}
+                <option value={{order}}>{{order}}</option>
+                {% endif %}
+                {%endfor%}
+                {% endif %}
+            </select>
+        </div>
+        <div class="mt-3 d-flex justify-content-between">
 
+            <button class="btn btn-primary" type="submit">Submit</button>
+    
+        </div>
     </div>
+
 </form>
 <br>
 <table class="table table-bordered table-striped" style="background-color:#fff;color:#333;">
@@ -77,7 +104,7 @@ Attempts
         {%for i in total_pages%}
         {% if i is not current_page%}
         <li class="page-item"><a class="page-link"
-                href="?page_size={{ request.GET.page_size }}&page_number={{i}}">{{i}}</a>
+                href="?page_size={{ request.GET.page_size }}&page_number={{i}}&ordering={{ request.GET.ordering }}">{{i}}</a>
         </li>
         {%else%}
         <li class="page-item active">

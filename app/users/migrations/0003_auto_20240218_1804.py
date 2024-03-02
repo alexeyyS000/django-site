@@ -24,8 +24,8 @@ def grant_permissions(apps, schema_editor):
         ("quizzes", "Choice"),
         ("quizzes", "AttemptPipeline"),
     ]
-    for i in PERMISSIONS_LIST:
-        model = apps.get_model(i[0], i[1])
+    for package, model_name in PERMISSIONS_LIST:
+        model = apps.get_model(package, model_name)
         content_type = ContentType.objects.get_for_model(model)
         test_permission = Permission.objects.filter(content_type=content_type).values_list("id", flat=True)
         moderator_group.permissions.add(*test_permission)

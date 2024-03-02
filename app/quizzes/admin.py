@@ -3,8 +3,8 @@ from adminsortable2.admin import SortableStackedInline
 from django.contrib import admin
 from django_admin_search.admin import AdvancedSearchAdmin
 
-from .forms import AttemptFormSearch
-from .forms import TestFormSearch
+from .forms import AttemptFormSearchAdmin
+from .forms import TestFormSearchAdmin
 from .models import AttemptPipeline
 from .models import AttemptState
 from .models import Choice
@@ -36,7 +36,7 @@ class TestAdmin(AdvancedSearchAdmin, SortableAdminBase, admin.ModelAdmin):
     list_display = ["name", "is_hidden"]
     fields = ["name", "description", "tag", "time_for_complete", "attempts", "is_hidden"]
     inlines = [QuestionInline]
-    search_form = TestFormSearch
+    search_form = TestFormSearchAdmin
 
     def save_model(self, request, obj, form, change):
         obj.author = request.user
@@ -51,7 +51,7 @@ class StateInline(admin.TabularInline):
 class AttemptAdmin(AdvancedSearchAdmin, admin.ModelAdmin):
     list_display = ["time_start", "time_end", "user", "test", "is_attempt_completed"]
     inlines = [StateInline]
-    search_form = AttemptFormSearch
+    search_form = AttemptFormSearchAdmin
 
     def has_add_permission(self, request):
         return False

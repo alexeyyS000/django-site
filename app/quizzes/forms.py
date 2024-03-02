@@ -22,17 +22,12 @@ class AnswerQuestionForm(forms.Form):
         current_attempt = AttemptPipeline.objects.get(user=user, test_id=test, is_attempt_completed=False)
         answers = {int(x) for x in self.cleaned_data.get("choices")}
         right_answers = {x.id for x in Choice.objects.filter(question=self.question, right_answer=True)}
-        if answers == right_answers:
-            AttemptState.objects.get_or_create(
-                attempt=current_attempt, question=self.question, defaults={"answer": True}
-            )
-        else:
-            AttemptState.objects.get_or_create(
-                attempt=current_attempt, question=self.question, defaults={"answer": False}
-            )
+        AttemptState.objects.get_or_create(
+            attempt=current_attempt, question=self.question, defaults={"answer": answers == right_answers}
+        )
 
 
-class TestFormSearch(forms.Form):
+class TestFormSearchAdmin(forms.Form):
     name = forms.CharField(
         required=False,
         widget=forms.TextInput(
@@ -46,7 +41,7 @@ class TestFormSearch(forms.Form):
     )
 
 
-class AttemptFormSearch(forms.Form):
+class AttemptFormSearchAdmin(forms.Form):
     test = forms.CharField(
         required=False,
         widget=forms.TextInput(

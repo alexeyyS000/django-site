@@ -131,7 +131,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-DEBUG = True
+DEBUG = False
 
 
 STATICFILES_DIRS = [
