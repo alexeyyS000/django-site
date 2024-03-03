@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import MinValueValidator
 from django.db import models
 
 UserModel = get_user_model()
@@ -16,10 +17,11 @@ class Test(models.Model):
     description = models.CharField(max_length=256, null=False)
     tag = models.ManyToManyField(Tag, blank=True)
     time_for_complete = models.DurationField(null=False)
-    attempts = models.IntegerField(null=False)
+    attempts = models.IntegerField(null=False, validators=[MinValueValidator(1)])
     author = models.ForeignKey("users.User", on_delete=models.RESTRICT)
     created = models.DateTimeField(auto_now_add=True)
-    is_hidden = models.BooleanField(default=False)
+    is_hidden = models.BooleanField(default=True)
+    status = models.IntegerField(null=False, default=0)
 
     def __str__(self):
         return self.name

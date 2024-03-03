@@ -62,7 +62,7 @@ Attempts
         <div class="mt-3 d-flex justify-content-between">
 
             <button class="btn btn-primary" type="submit">Submit</button>
-    
+
         </div>
     </div>
 
@@ -71,9 +71,9 @@ Attempts
 <table class="table table-bordered table-striped" style="background-color:#fff;color:#333;">
     <thead>
         <tr>
-            <th >Number</th>
-            <th >Time start</th>
-            <th >Result</th>
+            <th>Number</th>
+            <th>Time start</th>
+            <th>Result</th>
             <th>time took</th>
         </tr>
     </thead>
@@ -89,7 +89,8 @@ Attempts
             </td>
             <td>{{attempt.attempt.time_start}}</td>
             <td>{{attempt.right_answers}} of {{attempt.total_questions}}</td>
-            <td> {% if attempt.time_took %}{{attempt.time_took}}{%else%}Current attempt <br>(<a href="{% url 'quizzes:start_test' test_id 1 %}">link</a> to complete){%endif%}</td>
+            <td> {% if attempt.time_took %}{{attempt.time_took}}{%else%}Current attempt <br>(<a
+                    href="{% url 'quizzes:start_test' test_id 1 %}">link</a> to complete){%endif%}</td>
         </tr>
         {% endfor %}
 
@@ -104,7 +105,7 @@ Attempts
         {%for i in total_pages%}
         {% if i is not current_page%}
         <li class="page-item"><a class="page-link"
-                href="?page_size={{ request.GET.page_size }}&page_number={{i}}&ordering={{ request.GET.ordering }}">{{i}}</a>
+                href="?{%if request.GET.page_size%}page_size={{ request.GET.page_size }}&{%endif%}page_number={{i}}{%if request.GET.ordering%}&ordering={{ request.GET.ordering }}{%endif%}">{{i}}</a>
         </li>
         {%else%}
         <li class="page-item active">
