@@ -84,7 +84,7 @@ Question
 
       <br>
       <div class="text-center">
-        {%if all_question_list|length is answered_questions|length %}
+        {%if is_all_done %}
         <button class="btn btn-primary" onclick="redirectToResultPage()">
           finish test<i class="fe fe-arrow-right"></i>
         </button>
@@ -105,7 +105,7 @@ Question
   const FINISH_URL = "{% url 'quizzes:result' test.id %}";
   const countDown = document.getElementById('timer');
   const finishbutton = document.getElementById('finishbutton');
-  let timeSeconds = '{{time_up}}';
+  let timeSeconds = {{time_up}};
 
   function redirectToResultPage() {
     location.replace(FINISH_URL)

@@ -21,14 +21,14 @@ class Test(models.Model):
     author = models.ForeignKey("users.User", on_delete=models.RESTRICT)
     created = models.DateTimeField(auto_now_add=True)
     is_hidden = models.BooleanField(default=True)
-    status = models.IntegerField(null=False, default=0)
+    has_first_attempt = models.BooleanField(null=False, default=False)
 
     def __str__(self):
         return self.name
 
 
 class Question(models.Model):
-    test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    test = models.ForeignKey(Test, related_name="questions", on_delete=models.CASCADE)
     text = models.CharField(max_length=256)
     order = models.PositiveIntegerField(default=0, blank=False, null=False, db_index=True)
 
@@ -40,7 +40,7 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name="choices", on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=256)
     right_answer = models.BooleanField(default=False)
 
@@ -58,5 +58,6 @@ class AttemptPipeline(models.Model):
 
 class AttemptState(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer = models.BooleanField()
-    attempt = models.ForeignKey(AttemptPipeline, on_delete=models.CASCADE)
+    answer = models.CharField(null=True)
+    attempt = models.ForeignKey(AttemptPipeline, related_name="pipelines", on_delete=models.CASCADE)
+    is_right = models.BooleanField(default=False)

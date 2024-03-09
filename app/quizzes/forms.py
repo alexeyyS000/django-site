@@ -13,25 +13,26 @@ class AnswerQuestionForm(forms.Form):
             self.question = None
         super(AnswerQuestionForm, self).__init__(*args, **kwargs)
         if self.question:
-            choices = Choice.objects.filter(question=self.question)
-            if len(choices.filter(right_answer=True)) > 1:
+            choices = self.question.choices.all()
+            if self.question.is_one_right_answer > 1:
                 self.fields["choices"] = forms.MultipleChoiceField(
-                    choices=[(o.id, str(o)) for o in Choice.objects.filter(question=self.question)],
+                    choices=[(o.id, str(o)) for o in choices],
                     widget=forms.CheckboxSelectMultiple,
                 )
             else:
                 self.fields["choices"] = forms.ChoiceField(
-                    choices=[(o.id, str(o)) for o in Choice.objects.filter(question=self.question)],
+                    choices=[(o.id, str(o)) for o in choices],
                     widget=forms.RadioSelect,
                 )
 
     def save(self, user, test):
         current_attempt = AttemptPipeline.objects.get(user=user, test_id=test, is_attempt_completed=False)
         cleaned_data = self.cleaned_data.get("choices")
-        answers = {int(x) for x in cleaned_data} if type(cleaned_data) is list else {int(cleaned_data)}
+        answers = " ".join(str(x) for x in cleaned_data) if type(cleaned_data) is list else cleaned_data
+        answers_dict = {int(x) for x in cleaned_data} if type(cleaned_data) is list else {int(cleaned_data)}
         right_answers = {x.id for x in Choice.objects.filter(question=self.question, right_answer=True)}
-        AttemptState.objects.get_or_create(
-            attempt=current_attempt, question=self.question, defaults={"answer": answers == right_answers}
+        AttemptState.objects.create(
+            attempt=current_attempt, question=self.question, answer=answers, is_right=answers_dict == right_answers
         )
 
 

@@ -42,6 +42,13 @@ class TestAdmin(AdvancedSearchAdmin, SortableAdminBase, admin.ModelAdmin):
         obj.author = request.user
         super().save_model(request, obj, form, change)
 
+    def has_change_permission(self, request, obj=None):
+        if obj:
+            if obj.has_first_attempt:
+                return False
+            else:
+                return True
+
 
 class StateInline(admin.TabularInline):
     model = AttemptState
@@ -65,3 +72,13 @@ class QuestionAdmin(admin.ModelAdmin):
     list_display = ["text", "test"]
     fields = ["text", "test"]
     inlines = [ChoiceInline]
+
+    def has_change_permission(self, request, obj=None):
+        if obj:
+            if Question.objects.select_related("test").get(id=obj.id).test.has_first_attempt:
+                return False
+            else:
+                return True
+
+    def has_delete_permission(self, request, obj=None):
+        self.has_change_permission(request, obj)

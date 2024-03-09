@@ -14,7 +14,7 @@ Result
     </thead>
     <tbody id="myTable">
         {% for obj in results %}
-        {% if obj.answer %}
+        {% if obj.is_right %}
         <tr style="background-color: rgba(0, 128, 0, 0.23);">
             <td>{{obj.question}}</td>
             <td style="text-align: center;">✅</td>
