@@ -26,14 +26,14 @@ Question
           </div>
           <div>
             <span class="text-danger"><i class="fe fe-clock me-1 align-middle"></i>
-              <time id="timer"></time>
+              <time id="timer">{{default_time_up}}</time>
             </span>
           </div>
         </div>
 
 
         <div class="mt-5">
-          {%if form.question.id not in answered_questions%}
+          {%if not is_current_answered%}
           <h3 class="mb-3 mt-1">{{form.question}}</h3>
           {%else%}
           <h3 class="mb-3 mt-1">{{form.question}} ✓ </h3>
@@ -42,7 +42,7 @@ Question
             {% csrf_token %}
 
             <div class="list-group">
-              {%if form.question.id not in answered_questions%}
+              {%if not is_current_answered%}
               {% for choice in form.choices %}
               <div class="list-group-item list-group-item-action" aria-current="true">
                 {{choice}}
@@ -55,7 +55,7 @@ Question
         </div>
 
         <div class="mt-3 d-flex justify-content-between">
-          {%if form.question.id not in answered_questions%}
+          {%if not is_current_answered%}
           <button class="btn btn-primary" type="submit">Submit</button>
           {%endif%}
         </div>
@@ -105,7 +105,7 @@ Question
   const FINISH_URL = "{% url 'quizzes:result' test.id %}";
   const countDown = document.getElementById('timer');
   const finishbutton = document.getElementById('finishbutton');
-  let timeSeconds = {{time_up}};
+  let timeSeconds = {{ time_up }};
 
   function redirectToResultPage() {
     location.replace(FINISH_URL)

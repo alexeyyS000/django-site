@@ -127,6 +127,7 @@ def register_confirm(request: HttpRequest, token: str) -> HttpResponseRedirect:
 
 
 class CustomPasswordResetView(PasswordResetView):
+    email_template_name = "emails/password_reset_email.html"
     success_url = reverse_lazy("users:password_reset_done")
     form_class = CustomPasswordResetForm
 

@@ -84,11 +84,12 @@ class DetailQuestionView(LoginRequiredMixin, View):
         time_up = get_time_left(pipline.time_start, test.time_for_complete)
         if time_up <= datetime.timedelta(minutes=0, seconds=0):
             return HttpResponseRedirect(reverse("quizzes:result", kwargs={"quiz_id": quiz_id}))
-        answered_questions = AttemptState.objects.filter(attempt=pipline)
+        answered_questions = AttemptState.objects.select_related("question").filter(attempt=pipline)
         context = {
             "form": AnswerQuestionForm(question=current_question),
             "time_up": time_up.seconds,
-            "answered_questions": [i.question_id for i in answered_questions],
+            "default_time_up": chop_microseconds(time_up),
+            "is_current_answered": current_question in [i.question for i in answered_questions],
             "test": test,
             "all_question_list": questions,
             "is_all_done": len(questions) == len(answered_questions),
@@ -109,17 +110,18 @@ class DetailQuestionView(LoginRequiredMixin, View):
         if time_up <= datetime.timedelta(minutes=0, seconds=0):
             return HttpResponseRedirect(reverse("quizzes:result", kwargs={"quiz_id": quiz_id}))
         form = AnswerQuestionForm(request.POST, question=current_question)
-        answered_questions = AttemptState.objects.filter(attempt=pipline)
+        answered_questions = AttemptState.objects.select_related("question").filter(attempt=pipline)
         if form.is_valid():
             form.save(request.user, test)
 
         context = {
             "form": form,
             "time_up": time_up.seconds,
-            "answered_questions": [i.question_id for i in answered_questions],
+            "default_time_up": chop_microseconds(time_up),
             "test": test,
             "all_question_list": questions,
             "is_all_done": len(questions) == len(answered_questions),
+            "is_current_answered": current_question in [i.question for i in answered_questions],
         }
         return render(request, self.template_name, context)
 
@@ -186,7 +188,12 @@ class AttemptsView(LoginRequiredMixin, View):
             .annotate(time_took=F("time_end") - F("time_start") if F("time_end") else None)
         )
         results = []
-        total_questions = attempts.aggregate(Count("id"))["id__count"]  # вычислять на уровне запроа
+        try:
+            total_questions = attempts[0].pipelines.aggregate(Count("id"))[
+                "id__count"
+            ]  # вычислять на уровне запроа.all()
+        except IndexError:
+            pass
         for attempt in attempts:
             state = attempt.pipelines.all()
             right_answers = state.filter(is_right=True).count()
