@@ -5,8 +5,8 @@ from ..errors import BadRequestParametrError
 
 def get_time_left(time_start: datetime.datetime, time_for_complete: datetime.timedelta):
     time_left = time_for_complete - (
-        datetime.datetime.now().replace(tzinfo=None) - time_start.replace(tzinfo=None)
-    )  # работать в utc
+        datetime.datetime.utcnow().replace(tzinfo=None) - time_start.replace(tzinfo=None)
+    )
     return time_left
 
 

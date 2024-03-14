@@ -121,4 +121,11 @@ Attempts
     </ul>
 </nav>
 
+{%if none_attempts_yet%}
+<div class="container d-flex align-items-center justify-content-center">
+    <div>
+        <h3>None attempts yet</h3>
+    </div>
+</div>
+{%endif%}
 {% endblock %}

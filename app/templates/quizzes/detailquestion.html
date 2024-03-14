@@ -42,13 +42,14 @@ Question
             {% csrf_token %}
 
             <div class="list-group">
-              {%if not is_current_answered%}
+
               {% for choice in form.choices %}
-              <div class="list-group-item list-group-item-action" aria-current="true">
+              <div class="list-group-item list-group-item-action {%if is_current_answered%}disabled{%endif%}"
+                aria-current="true">
                 {{choice}}
               </div>
               {% endfor %}
-              {%endif%}
+
             </div>
 
 

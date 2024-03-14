@@ -3,10 +3,6 @@ import datetime
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import EmptyPage
 from django.core.paginator import Paginator
-from django.db.models import Case
-from django.db.models import Count
-from django.db.models import F
-from django.db.models import When
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -71,9 +67,7 @@ class DetailQuestionView(LoginRequiredMixin, View):
         test.save()
         if test in request.user.done_tests.all():
             return HttpResponseRedirect(reverse("quizzes:attempts", kwargs={"quiz_id": quiz_id}))
-        questions = test.questions.annotate(
-            is_one_right_answer=Count(Case(When(choices__right_answer=True, then=1)))
-        ).order_by("order")
+        questions = test.questions.with_quantity_right_answers().order_by("order")
         try:
             current_question = questions[question_number - 1]
         except IndexError:
@@ -86,9 +80,9 @@ class DetailQuestionView(LoginRequiredMixin, View):
             return HttpResponseRedirect(reverse("quizzes:result", kwargs={"quiz_id": quiz_id}))
         answered_questions = AttemptState.objects.select_related("question").filter(attempt=pipline)
         context = {
-            "form": AnswerQuestionForm(question=current_question),
+            "form": AnswerQuestionForm(user=request.user, question=current_question, pipline=pipline),
             "time_up": time_up.seconds,
-            "default_time_up": chop_microseconds(time_up),
+            "default_time_up": str(chop_microseconds(time_up)).split(":", 1)[1],
             "is_current_answered": current_question in [i.question for i in answered_questions],
             "test": test,
             "all_question_list": questions,
@@ -98,9 +92,7 @@ class DetailQuestionView(LoginRequiredMixin, View):
 
     def post(self, request: HttpRequest, quiz_id: int, question_number: int) -> HttpResponse:
         test = Test.objects.prefetch_related("questions").get(id=quiz_id)
-        questions = test.questions.annotate(
-            is_one_right_answer=Count(Case(When(choices__right_answer=True, then=1)))
-        ).order_by("order")
+        questions = test.questions.with_quantity_right_answers().order_by("order")
         current_question = questions[question_number - 1]
         pipline, created = AttemptPipeline.objects.get_or_create(
             user=request.user, test=test, is_attempt_completed=False
@@ -109,7 +101,7 @@ class DetailQuestionView(LoginRequiredMixin, View):
         time_up = get_time_left(pipline.time_start, test.time_for_complete)
         if time_up <= datetime.timedelta(minutes=0, seconds=0):
             return HttpResponseRedirect(reverse("quizzes:result", kwargs={"quiz_id": quiz_id}))
-        form = AnswerQuestionForm(request.POST, question=current_question)
+        form = AnswerQuestionForm(request.POST, user=request.user, pipline=pipline, question=current_question)
         answered_questions = AttemptState.objects.select_related("question").filter(attempt=pipline)
         if form.is_valid():
             form.save(request.user, test)
@@ -117,7 +109,7 @@ class DetailQuestionView(LoginRequiredMixin, View):
         context = {
             "form": form,
             "time_up": time_up.seconds,
-            "default_time_up": chop_microseconds(time_up),
+            "default_time_up": str(chop_microseconds(time_up)).split(":", 1)[1],
             "test": test,
             "all_question_list": questions,
             "is_all_done": len(questions) == len(answered_questions),
@@ -162,7 +154,7 @@ class DetailTestView(LoginRequiredMixin, View):
         if not test:
             raise errors.TestNotFoundError
         attempts = test.attempts
-        attempts_used = AttemptPipeline.objects.filter(user=request.user, test_id=quiz_id).count()
+        attempts_used = AttemptPipeline.objects.filter(user=request.user, test_id=quiz_id).count()  # аннотироваьт тест
         context = {"test": test, "attempts": attempts, "attempts_used": attempts_used}
         return render(request, self.template_name, context)
 
@@ -182,18 +174,16 @@ class AttemptsView(LoginRequiredMixin, View):
         if page_size not in DEFAULT_SIZES_ATTEMPTS_PAGE:
             raise errors.BadRequestParametrError
         attempts = (
-            AttemptPipeline.objects.prefetch_related("pipelines")
+            AttemptPipeline.objects.with_time_took()
+            .prefetch_related("pipelines")
             .filter(test_id=quiz_id, user=request.user)
             .order_by(ordering)
-            .annotate(time_took=F("time_end") - F("time_start") if F("time_end") else None)
         )
         results = []
         try:
-            total_questions = attempts[0].pipelines.aggregate(Count("id"))[
-                "id__count"
-            ]  # вычислять на уровне запроа.all()
+            total_questions = attempts[0].pipelines.count()
         except IndexError:
-            pass
+            return render(request, self.template_name, {"none_attempts_yet": True})
         for attempt in attempts:
             state = attempt.pipelines.all()
             right_answers = state.filter(is_right=True).count()

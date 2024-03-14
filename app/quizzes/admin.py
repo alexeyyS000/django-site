@@ -44,10 +44,8 @@ class TestAdmin(AdvancedSearchAdmin, SortableAdminBase, admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         if obj:
-            if obj.has_first_attempt:
-                return False
-            else:
-                return True
+            return not obj.has_first_attempt
+
 
 
 class StateInline(admin.TabularInline):
@@ -75,10 +73,7 @@ class QuestionAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         if obj:
-            if Question.objects.select_related("test").get(id=obj.id).test.has_first_attempt:
-                return False
-            else:
-                return True
+            return not Question.objects.select_related("test").get(id=obj.id).test.has_first_attempt
 
     def has_delete_permission(self, request, obj=None):
         self.has_change_permission(request, obj)
