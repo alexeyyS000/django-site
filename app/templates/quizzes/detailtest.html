@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}
+detail {{test}}
+{% endblock %}
+{% block content %}
+
+
+<br>
+<p class="h1">{{test}}</p>
+<hr>
+<div class="container py-5">
+    <div class="clear"> </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Tags</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{%if test.tag.all%} {% for tag in test.tag.all %} {{tag}} {% endfor %} {%else%}No tags {%endif%}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Description</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{%if test.description%}{{test.description}}{%else%}No
+                                description{%endif%}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Time to pass</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{test.time_for_complete}}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Author</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{ test.author }}</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Created</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{ test.created }} utc</p>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Attempts</p>
+                        </div>
+                        <div class="col-sm-9">
+                            <p class="text-muted mb-0">{{attempts_used}}/{{attempts}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {%if attempts_used is not attempts%}
+    <a class="btn btn-primary" href="{% url 'quizzes:start_test' test.id 1 %}" role="button">start test</a> &nbsp;
+    {%endif%}
+    <a class="btn btn-primary" href="{% url 'quizzes:attempts' test.id %}" role="button">previous attempts</a>
+</div>
+{% endblock %}

@@ -3,12 +3,23 @@ services:
   app:
     restart: always
     build: .
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
     env_file:
       - .env
     depends_on:
       - postgres
       - minio
+      - redis
+      - mailpit
+  worker:
+    restart: always
+    build: .
+    command: celery -A app worker -l INFO
+    env_file:
+      - .env
+    depends_on:
+      - app
+
   postgres:
     restart: always
     image: postgres:15.3-alpine
@@ -16,44 +27,39 @@ services:
       - postgres-data:/var/lib/postgresql/data
     env_file:
       - .env
-  nginx:
-    image: nginx:1.19.2-alpine
-    volumes:
-      - ./app/conf.d:/etc/nginx/conf.d
-    depends_on:
-      - app
   minio:
     image: minio/minio:RELEASE.2021-04-06T23-11-00Z
     volumes:
-      - data:/data
+      - minio-data:/minio-data
     env_file:
       - .env
-    command: minio server /data/minio/
+    command: minio server /minio-data/minio/
 
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - app
+  redis:
+    restart: always
+    image: redis:7.0-alpine
+
+  mailpit:
+    image: axllent/mailpit
+    restart: always
+    volumes:
+      - ./mailpit-data:/mailpit-data
+    ports:
+      - 8025:8025
+      - 1025:1025
+    env_file:
+      - .env
+
+    
 volumes:
   postgres-data:
-  data:
+  minio-data:
   
-    #command: bash -c "minio server /data/minio/ && brew install minio/stable/mc && mc policy set download minio/bucketname"
-
-
-    # healthcheck:
-    #   test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-    #   interval: 30s
-    #   timeout: 20s
-    #   retries: 3
-    # list default hosts after install: 
-# mc config host ls
-
-# # remove all hosts: mc config host rm {hostName}
-# mc config host rm local
-
-# # add your host: mc config host add {hostName} {url} {apiKey} {apiSecret}
-# mc config host add local http://127.0.0.1:9000 ClientIdASSDSD ClientSecretASASASdsasdasdasdasd
-
-# # create bucket: mc mb {host}/{bucket}
-# mc mb local/mybucket
-
-# # change bucket policy: mc policy {policy} {host}/{bucket}
-# mc policy set public local/mybucket
-

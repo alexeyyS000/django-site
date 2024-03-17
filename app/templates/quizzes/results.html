@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}
+Result
+{% endblock %}
+{% block content %}
+<h1>{{ test }} is comlete</h1> {%if attempt_num%}{{attempt_num}}{%endif%}
+<br>
+<table class="table table-bordered" style="width: 70%; background-color:#fff;color:#333;">
+    <thead>
+        <tr>
+            <th>question</th>
+            <th style="width: 11%;">Is right?</th>
+        </tr>
+    </thead>
+    <tbody id="myTable">
+        {% for obj in results %}
+        {% if obj.is_right %}
+        <tr style="background-color: rgba(0, 128, 0, 0.23);">
+            <td>{{obj.question}}</td>
+            <td style="text-align: center;">✅</td>
+        </tr>
+        {%else%}
+        <tr style="background-color:rgba(255, 0, 0, 0.29);">
+            <td>{{obj.question}}</td>
+            <td style="text-align: center;">❌</td>
+        </tr>
+        {%endif%}
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}

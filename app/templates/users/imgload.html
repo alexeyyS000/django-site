@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}
+Load avatar
+{% endblock %}
+{% block content %}
+
+<form class="mt-5" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="choosefilebutton">
+        {% if not form.avatar.errors %}
+        select image (less 10mb)
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            {{form.avatar.errors}}
+        </div>
+        {% endif %}
+        {{form.avatar}}
+        <div style="margin-top:20px;">
+            <button class="btn btn-secondary btn-sm" type="submit">Upload</button>
+        </div>
+    </div>
+</form>
+
+{% if img_obj %}
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" fill="currentColor" class="bi bi-check center"
+    viewBox="0 0 16 16">
+    <path
+        d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z">
+    </path>
+</svg>
+{% endif %}
+{% endblock %}
