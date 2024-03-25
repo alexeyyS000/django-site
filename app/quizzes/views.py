@@ -150,12 +150,11 @@ class DetailTestView(LoginRequiredMixin, View):
     template_name = "quizzes/detailtest.html"
 
     def get(self, request: HttpRequest, quiz_id: int) -> HttpResponse:
-        test = Test.objects.filter(id=quiz_id, is_hidden=False).first()
+        test = Test.objects.with_count_attempts_used(request.user).filter(id=quiz_id, is_hidden=False).first()
         if not test:
             raise errors.TestNotFoundError
         attempts = test.attempts
-        attempts_used = AttemptPipeline.objects.filter(user=request.user, test_id=quiz_id).count()  # аннотироваьт тест
-        context = {"test": test, "attempts": attempts, "attempts_used": attempts_used}
+        context = {"test": test, "attempts": attempts, "attempts_used": test.attempts_used}
         return render(request, self.template_name, context)
 
 

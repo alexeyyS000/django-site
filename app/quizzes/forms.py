@@ -53,9 +53,7 @@ class TestFormSearchAdmin(forms.Form):
             }
         ),
     )
-    tag = forms.CharField(
-        required=False, widget=forms.TextInput(attrs={"filter_field": "tag__name"})
-    )
+    tag = forms.CharField(required=False, widget=forms.TextInput(attrs={"filter_field": "tag__name"}))
 
 
 class AttemptFormSearchAdmin(forms.Form):

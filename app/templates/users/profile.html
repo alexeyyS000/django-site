@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}
-Profile
+{% trans 'Profile' %}
 {% endblock %}
 {% block content %}
+
 <section style="background-color: #eee;">
     <div class="container py-5">
 
@@ -14,15 +16,14 @@ Profile
                         <a href="{% url 'users:load_image' %}"><img src="{{ user.avatar.url }}"
                                 class="rounded-circle img-fluid" style="width: 150px;"></a>
                         {% else %}
-                        <a class="link-body-emphasis text-decoration-none" href="{% url 'users:load_image' %}">Upload
-                            image</a>
+                        <a class="link-body-emphasis text-decoration-none" href="{% url 'users:load_image' %}">{% trans 'Upload image' %}</a>
                         {% endif %}
                         <h5 class="my-3">{{ user.username }}</h5>
                         <p class="text-muted mb-1">{{ user.email }}
                             {% if user.is_active_email %}
                             ✓
                             {%endif %}</p>
-                        <p class="text-muted mb-4">total answers to questions:</p>
+                        <p class="text-muted mb-4">{% trans 'Total tests complete' %}:</p>
                     </div>
                 </div>
             </div>
@@ -31,7 +32,7 @@ Profile
                     <div class="card-body">
                         <div class="row">
                             <div class="col-sm-3">
-                                <p class="mb-0">Name</p>
+                                <p class="mb-0">{% trans 'Name' %}</p>
                             </div>
                             <div class="col-sm-9">
                                 <p class="text-muted mb-0">{{user.first_name}}</p>
@@ -40,7 +41,7 @@ Profile
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
-                                <p class="mb-0">Surname</p>
+                                <p class="mb-0">{% trans 'Surname' %}</p>
                             </div>
                             <div class="col-sm-9">
                                 <p class="text-muted mb-0">{{user.last_name}}</p>
@@ -49,7 +50,7 @@ Profile
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
-                                <p class="mb-0">Date of Birth</p>
+                                <p class="mb-0">{% trans 'Date of Birth' %}</p>
                             </div>
                             <div class="col-sm-9">
                                 <p class="text-muted mb-0">{{user.birthday}}</p>
@@ -58,7 +59,7 @@ Profile
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
-                                <p class="mb-0">Date of Registration</p>
+                                <p class="mb-0">{% trans 'Date of Registration' %}</p>
                             </div>
                             <div class="col-sm-9">
                                 <p class="text-muted mb-0">{{ user.date_joined }}</p>
@@ -67,7 +68,7 @@ Profile
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
-                                <p class="mb-0">Language</p>
+                                <p class="mb-0">{% trans 'Language' %}</p>
                             </div>
                             <div class="col-sm-9">
                                 <p class="text-muted mb-0">{{ user.language }}</p>
@@ -76,7 +77,7 @@ Profile
                         <hr>
                         <div class="row">
                             <div class="col-sm-3">
-                                <p class="mb-0">Country</p>
+                                <p class="mb-0">{% trans 'Country' %}</p>
                             </div>
                             <div class="col-sm-9">
                                 <p class="text-muted mb-0">{{ user.country.name }}</p>

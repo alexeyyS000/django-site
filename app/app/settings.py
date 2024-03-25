@@ -58,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "app.middleware.ErrorHandlerMiddleware",
+    "app.middleware.LanguageMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -180,7 +181,6 @@ else:
     EMAIL_HOST_USER = config.EMAIL_HOST_USER
     EMAIL_HOST_PASSWORD = config.EMAIL_HOST_PASSWORD
     DEFAULT_FROM_EMAIL = config.DEFAULT_FROM_EMAIL
-    # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 CACHES = {
     "default": {
@@ -201,3 +201,6 @@ CELERY_RESULT_BACKEND = config.CELERY_RESULT_BACKEND
 MINIO_STORAGE_MEDIA_URL = f"http://{config.HOST}:80/media/local-media/"
 
 AUTH_USER_MODEL = "users.User"
+
+
+USE_L10N = True

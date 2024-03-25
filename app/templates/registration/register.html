@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}
-Signup
+{% trans 'Signup' %} 
 {% endblock %}
 {% block content %}
 
@@ -8,12 +9,12 @@ Signup
 
     <form method="post" class="needs-validation">
         {% csrf_token %}
-        <h1 class="h3 mb-3 fw-normal">Please fill the form</h1>
+        <h1 class="h3 mb-3 fw-normal">{% trans 'Please fill the form' %}</h1>
         <div class="form-group">
-            <label for="username">Username</label>
+            <label for="username">{% trans 'Username' %}</label>
             <input type="username"
                 class="form-control {% if form.username.value and not form.username.errors%}is-valid{%elif form.username.errors%}is-invalid{%endif%}"
-                name="username" id="username" placeholder="come up with username"
+                name="username" id="username" placeholder="{% trans 'come up with username' %}"
                 value="{% if form.username.value and not form.username.errors%}{{ form.username.value }}{% endif %}">
             <div class="invalid-feedback">
                 {{form.username.errors}}
@@ -21,7 +22,7 @@ Signup
 
         </div>
         <div class="form-group">
-            <label for="email">Email address</label>
+            <label for="email">{% trans 'Email address' %}</label>
             <input type="email"
                 class="form-control {% if form.email.value and not form.email.errors%}is-valid{%elif form.email.errors%}is-invalid{%endif%}"
                 name="email" id="email" placeholder="name@example.com"
@@ -31,30 +32,30 @@ Signup
             </div>
         </div>
         <div class="form-group">
-            <label for="first_name">First name</label>
+            <label for="first_name">{% trans 'First name' %}</label>
             <input type="first_name"
                 class="form-control {% if form.first_name.value and not form.first_name.errors%}is-valid{%elif form.first_name.errors%}is-invalid{%endif%}"
-                name="first_name" id="first_name" placeholder="enter your first name"
+                name="first_name" id="first_name" placeholder="{% trans 'enter your first name' %}"
                 value="{% if form.first_name.value and not form.first_name.errors%}{{ form.first_name.value }}{% endif %}">
             <div class="invalid-feedback">
                 {{form.first_name.errors}}
             </div>
         </div>
         <div class="form-group">
-            <label for="last_name">Last name</label>
+            <label for="last_name">{% trans 'Last name' %}</label>
             <input type="last_name"
                 class="form-control {% if form.last_name.value and not form.last_name.errors%}is-valid{%elif form.last_name.errors%}is-invalid{%endif%}"
-                name="last_name" id="last_name" placeholder="enter your last name"
+                name="last_name" id="last_name" placeholder="{% trans 'enter your last name' %}"
                 value="{% if form.last_name.value and not form.last_name.errors%}{{ form.last_name.value }}{% endif %}">
             <div class="invalid-feedback">
                 {{form.last_name.errors}}
             </div>
         </div>
         <div class="form-group">
-            <label for="birthday">birthday</label>
+            <label for="birthday">{% trans 'birthday' %}</label>
             <input type="date"
                 class="form-control {% if form.birthday.value and not form.birthday.errors%}is-valid{%elif form.birthday.errors%}is-invalid{%endif%}"
-                name="birthday" id="birthday" placeholder="enter your birthday"
+                name="birthday" id="birthday" placeholder="{% trans 'enter your birthday' %}"
                 value="{% if form.birthday.value and not form.birthday.errors%}{{ form.birthday.value }}{% endif %}">
             <span id="startDateSelected"></span>
             <div class="invalid-feedback">
@@ -62,17 +63,17 @@ Signup
             </div>
         </div>
         <div class="form-group">
-            <label for="pwd1">Password</label>
+            <label for="pwd1">{% trans 'Password' %}</label>
             <input type="password"
                 class="form-control {% if form.password2.value and not form.password2.errors%}is-valid{%elif form.password2.errors%}is-invalid{%endif%}"
-                name="password1" id="pwd1" placeholder="make up password"
+                name="password1" id="pwd1" placeholder="{% trans 'make up password' %}"
                 value="{% if form.password1.value and not form.password2.errors%}{{ form.password1.value }}{% endif %}">
         </div>
         <div class="form-group">
-            <label for="pwd2">Repeat Password</label>
+            <label for="pwd2">{% trans 'Repeat Password' %}</label>
             <input type="password"
                 class="form-control {% if form.password2.value and not form.password2.errors%}is-valid{%elif form.password2.errors%}is-invalid{%endif%}"
-                name="password2" id="pwd2" placeholder="Repeat Password"
+                name="password2" id="pwd2" placeholder="{% trans 'Repeat Password' %}"
                 value="{% if form.password2.value and not form.password2.errors%}{{ form.password2.value }}{% endif %}">
             <div class="invalid-feedback">
                 {{form.password2.errors}}
@@ -88,7 +89,7 @@ Signup
             {{language}}
             {% endfor %}
         </select>
-        <button class="btn btn-primary w-100 py-2" type="submit">Submit</button>
+        <button class="btn btn-primary w-100 py-2" type="submit">{% trans 'Submit' %}</button>
         <p class="mt-5 mb-3 text-body-secondary">© 2017–2023</p>
     </form>
 </div>

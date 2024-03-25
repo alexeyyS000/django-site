@@ -47,7 +47,6 @@ class TestAdmin(AdvancedSearchAdmin, SortableAdminBase, admin.ModelAdmin):
             return not obj.has_first_attempt
 
 
-
 class StateInline(admin.TabularInline):
     model = AttemptState
 

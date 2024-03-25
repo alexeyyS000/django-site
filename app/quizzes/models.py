@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Case
 from django.db.models import Count
 from django.db.models import F
+from django.db.models import IntegerField
 from django.db.models import When
 
 UserModel = get_user_model()
@@ -19,6 +20,18 @@ class Tag(models.Model):
         return self.name
 
 
+class TestManager(models.Manager):
+    def with_count_attempts_used(self, user):
+        return self.annotate(
+            attempts_used=Count(
+                Case(
+                    When(attemptpipeline__user=user, then=1),
+                    output_field=IntegerField(),
+                )
+            )
+        )
+
+
 class Test(models.Model):
     name = models.CharField(max_length=32, null=False)
     description = models.CharField(max_length=256, null=False)
@@ -29,6 +42,7 @@ class Test(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     is_hidden = models.BooleanField(default=True)
     has_first_attempt = models.BooleanField(null=False, default=False)
+    objects = TestManager()
 
     def __str__(self):
         return self.name

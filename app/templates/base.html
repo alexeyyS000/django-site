@@ -18,7 +18,7 @@
 </head>
 
 <body class="d-flex flex-column h-100">
-
+    {% load i18n %}
 
     <header>
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
@@ -30,27 +30,39 @@
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav me-auto mb-2 mb-md-0">
                         <li class="nav-item">
-                            <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                            <a class="nav-link {% if request.path == '/' %}active{% endif %}"
+                                href="{% url 'home' %}">{% trans 'Home' %}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% if 'quizzes' in request.path %}active{% endif %}" href="{% if user.is_authenticated %}{% url 'quizzes:find' %}{% else %}{% url 'users:login' %}{% endif %}">Tests</a>
+                            <a class="nav-link {% if 'quizzes' in request.path %}active{% endif %}"
+                                href="{% if user.is_authenticated %}{% url 'quizzes:find' %}{% else %}{% url 'users:login' %}{% endif %}">{% trans 'Tests' %}</a>
                         </li>
-                        <li class="position-absolute end-0 nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              Account
+
+                        <li class="end-0 nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                {% trans 'Account' %}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarScrollingDropdown">
-                              {% if user.is_authenticated %}
-                              <li><a class="dropdown-item" href="{% url 'users:profile' %}">{{ user }}</a></li>
-                              <li><hr class="dropdown-divider"></li>
-                              <li><a class="dropdown-item" href="{% url 'users:logout' %}">Logout</a></li>
-                              {% else %}
-                              <li><a class="dropdown-item" href="{% url 'users:login' %}">Login</a></li>
-                              <li><a class="dropdown-item" href="{% url 'users:signup' %}">Registration</a></li>
-                              {% endif %}
+                                {% if user.is_authenticated %}
+                                <li><a class="dropdown-item" href="{% url 'users:profile' %}">{{ user }}</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'users:logout' %}">{% trans 'Logout' %}</a></li>
+                                {% else %}
+                                <li><a class="dropdown-item" href="{% url 'users:login' %}">{% trans 'Login' %}</a></li>
+                                <li><a class="dropdown-item" href="{% url 'users:signup' %}">{% trans 'Registration' %}</a></li>
+                                {% endif %}
+                                    </ul>
+                                </li>
                             </ul>
-                          </li>
+                        </li>
                     </ul>
+                    <select onchange="handleChangeLocale(this)" id="lang" class="selectpicker" data-width="fit">
+                        <option {% if request.COOKIES.django_language == 'en' %}selected{% endif %} value="en">{% trans 'English' %}</option>
+                        <option {% if request.COOKIES.django_language == 'ru' %}selected{% endif %} value="ru">{% trans 'Russian' %}</option>
+                      </select>
                 </div>
             </div>
         </nav>
@@ -65,9 +77,45 @@
 
     <footer class="footer mt-auto py-3 bg-body-tertiary">
         <div class="container">
-            <span class="text-body-secondary">Place sticky footer content here.</span>
+            <span class="text-body-secondary">{% trans 'Place sticky footer content here' %}.</span>
         </div>
     </footer>
+
+    <script>
+
+        function setCookie(name, value, days) {
+            var expires = "";
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+        function getCookie(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+        function eraseCookie(name) {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+
+        function handleChangeLocale(element) {
+            let locale = element.value
+            setCookie('django_language', locale)
+            location.reload()
+        }
+        console.log('{{ request.COOKIES.django_language }}')
+
+    </script>
+
 </body>
 
 </html>

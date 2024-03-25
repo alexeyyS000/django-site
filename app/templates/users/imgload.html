@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}
-Load avatar
+{% trans 'Load avatar' %}
 {% endblock %}
 {% block content %}
 
@@ -8,7 +9,7 @@ Load avatar
     {% csrf_token %}
     <div class="choosefilebutton">
         {% if not form.avatar.errors %}
-        select image (less 10mb)
+        {% trans 'select image (less 10mb)' %}
         {% else %}
         <div class="alert alert-danger" role="alert">
             {{form.avatar.errors}}
@@ -16,7 +17,7 @@ Load avatar
         {% endif %}
         {{form.avatar}}
         <div style="margin-top:20px;">
-            <button class="btn btn-secondary btn-sm" type="submit">Upload</button>
+            <button class="btn btn-secondary btn-sm" type="submit">{% trans 'Upload' %}</button>
         </div>
     </div>
 </form>

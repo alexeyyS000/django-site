@@ -1,0 +1,255 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-03-21 23:01+0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+#: forms.py:17 forms.py:94
+msgid "Email"
+msgstr ""
+
+#: forms.py:26
+msgid "Password"
+msgstr "Пароль"
+
+#: forms.py:32
+msgid "Password confirmation"
+msgstr "Подтверждение пароля"
+
+#: forms.py:35
+msgid "Enter the same password as before, for verification."
+msgstr "Введите такой же пароль как и ранее для верификации."
+
+#: forms.py:38
+msgid "The two password fields didn’t match."
+msgstr "Пароли не совпадают."
+
+#: utils/models.py:32
+#, python-format
+msgid "Please keep filesize under %s. Current filesize %s"
+msgstr "Пожалуйста выберите файл менее %s. Текущий размер %s"
+
+#: views.py:57
+#, python-format
+msgid "follow this link %s \n"
+msgstr "перейдите по этой ссылке %s \n"
+
+
+
+msgid "Total tests complete"
+msgstr "Всего тестов завершено"
+
+
+msgid "Upload image"
+msgstr "Загрузить изображение"
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "Surname"
+msgstr "Фамилия"
+
+
+msgid "Date of Birth"
+msgstr "Дата рождения"
+
+
+msgid "Date of Registration"
+msgstr "Дата регистрации"
+
+
+msgid "Language"
+msgstr "Язык"
+
+
+msgid "Country"
+msgstr "Страна"
+
+msgid "Home page"
+msgstr "Домашняя страница"
+
+
+msgid "select image (less 10mb)"
+msgstr "выберете изображение (менее 10mb)"
+
+
+msgid "Upload"
+msgstr "Загрузить"
+
+
+msgid "Please sign in"
+msgstr "Пожалуйста, войдите"
+
+
+msgid "Email address"
+msgstr "Email адрес"
+
+
+
+
+
+msgid "incorrect email or password"
+msgstr "некорректный email или пароль"
+
+
+msgid "Remember me"
+msgstr "Запомнить меня"
+
+
+msgid "Sign in"
+msgstr "Войти"
+
+
+msgid "Forgot password"
+msgstr "Забыли пароль"
+
+msgid "Please fill the form"
+msgstr "Пожалуйста, заполните форму"
+
+
+msgid "Username"
+msgstr "Имя пользователя"
+
+
+msgid "First name"
+msgstr "Имя"
+
+
+msgid "Last name"
+msgstr "Фамилия"
+
+
+msgid "birthday"
+msgstr "Дата рождения"
+
+
+
+
+msgid "Repeat Password"
+msgstr "Повторите пароль"
+
+
+msgid "Submit"
+msgstr "Применить"
+
+msgid "come up with username"
+msgstr "придумайте имя пользователя"
+
+
+msgid "enter your first name"
+msgstr "введите имя"
+
+
+msgid "enter your last name"
+msgstr "введите фамилию"
+
+
+msgid "enter your birthday"
+msgstr "введите дату рождения"
+
+
+msgid "make up password"
+msgstr "придумайте пароль"
+
+
+msgid "Password reset"
+msgstr "Сброс пароля"
+
+msgid "We emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly"
+msgstr "Мы отправили вам по электронной почте инструкции по установке пароля, если существует учетная запись с указанным вами адресом электронной почты. Вам следует получить их в ближайшее время"
+
+msgid "If you not receive an email, please make sure you entered the address you registered with, and check your spam folder"
+msgstr "Если вы не получили электронное письмо, убедитесь, что вы ввели адрес, с которым зарегистрировались, и проверьте спам папкау"
+
+msgid "Please enter your new password twice so we can verify you typed it in correctly"
+msgstr "Пожалуйста, введите новый пароль дважды, чтобы мы могли убедиться, что вы ввели его правильно"
+
+
+msgid "new password"
+msgstr "новый пароль"
+
+
+msgid "repeat new password"
+msgstr "повторите новый пароль"
+
+
+msgid "The password reset link was invalid, possibly because it has already been used. Please request a new password reset"
+msgstr "Ссылка для сброса пароля недействительна, возможно, потому, что она уже использовалась. Пожалуйста, запросите сброс нового пароля"
+
+msgid "Your password has been set. You may go ahead and log in now"
+msgstr "Ваш пароль установлен. Вы можете войти в систему сейчас"
+
+msgid "Log in"
+msgstr "Войти"
+
+
+msgid "Home"
+msgstr "Домашняя страница"
+
+
+msgid "Tests"
+msgstr "Тесты"
+
+
+msgid "Account"
+msgstr "Аккаунт"
+
+
+
+msgid "Logout"
+msgstr "Выйти"
+
+
+
+msgid "Login"
+msgstr "Войти"
+
+
+msgid "Registration"
+msgstr "Регистрация"
+
+
+msgid "English"
+msgstr "Аиглийский"
+
+
+msgid "Russian"
+msgstr "Русский"
+
+
+msgid "Place sticky footer content here"
+msgstr "Разместите сюда прикрепленный контент нижнего колонтитула"
+
+
+msgid "Profile"
+msgstr "Профиль"
+
+msgid "Load avatar"
+msgstr "Загрузить аватар"
+
+
+msgid "Signup"
+msgstr "Регистрация"
+
+
+msgid "Password reset confirm"
+msgstr "Подтвержден сброс пароля"
+
+
+msgid "Password reset complete"
+msgstr "Сброс пароля выполнен"
